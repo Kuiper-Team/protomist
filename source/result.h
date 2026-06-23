@@ -3,7 +3,11 @@
 
 typedef enum {
     success,
-    out_of_memory
+
+    libsodium_initialization_error,
+    out_of_memory,
+
+    seed_decryption_error
 } result;
 
 #endif
