@@ -1,8 +1,10 @@
 #ifndef helpers_h
 #define helpers_h
 
+#include <stdbool.h>
+
 #include "result.h"
 
-result libsodium_check();
+bool libsodium_check();
 
 #endif
