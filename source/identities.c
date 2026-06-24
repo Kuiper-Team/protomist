@@ -1,3 +1,5 @@
+#include "identities.h"
+
 #include <sodium.h>
 #include <string.h>
 

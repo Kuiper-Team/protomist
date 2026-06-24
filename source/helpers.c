@@ -1,3 +1,5 @@
+#include "helpers.h"
+
 #include <sodium.h>
 #include <stdbool.h>
 
