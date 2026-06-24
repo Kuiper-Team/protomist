@@ -1,47 +1,60 @@
 #include <sodium.h>
 #include <string.h>
 
+#include "helpers.h"
 #include "result.h"
+#include "types.h"
+
+//Update identities.h too!
 
 //The seed is going to be the output of a BIP-39 function.
 result MIST_ENCRYPT_SEED(
         unsigned char* output,
-        unsigned long long output_length;
+        unsigned long long output_length,
         unsigned char* MIST_NONCE_OUTPUT,
         unsigned char* MIST_SALT_OUTPUT,
 
         const unsigned char* MIST_SEED,
-        const unsigned char* MIST_PASSPHRASE
-) { //Don't forget to wipe your MIST_SEED variable!
-    if (!check_libsodium) return libsodium_initialization_error;
+        const char* MIST_PASSPHRASE,
+        const size_t passphrase_length
+) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables!
+    if (!check_libsodium()) return libsodium_initialization_error;
 
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
 
-    randombytes_buf(nonce, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
-    randombytes_buf(salt, crypto_pwhash_SALTBYTES);
+    randombytes_buf(MIST_NONCE_OUTPUT, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
+    randombytes_buf(MIST_SALT_OUTPUT, crypto_pwhash_SALTBYTES);
     if (crypto_pwhash(
         encryption_key,
         encryption_key_length,
-        strlen(MIST_PASSPHRASE),
+        MIST_PASSPHRASE,
+        passphrase_length,
         MIST_SALT_OUTPUT,
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE,
         crypto_pwhash_ALG_ARGON2ID13
-    ) != 0)
-        return out_of_memory;
+    ) != 0) {
+        sodium_memzero(encryption_key, encryption_key_length);
 
-    crypto_aead_xchacha20poly1305_ietf_encrypt(
+        return seed_hashing_error;
+    }
+
+    if(crypto_aead_xchacha20poly1305_ietf_encrypt(
             output,
             &output_length,
             MIST_SEED,
-            MIST_SEED_LENGTH, //Defined at constants.h
+            MIST_SEED_SIZE, //Defined in types.h
             NULL,
             0,
             NULL,
             MIST_NONCE_OUTPUT,
             encryption_key
-    );
+    ) != 0) {
+        sodium_memzero(encryption_key, encryption_key_length);
+
+        return seed_encryption_error;
+    }
 
     sodium_memzero(encryption_key, encryption_key_length);
 
@@ -56,10 +69,10 @@ result MIST_DECRYPT_SEED(
     const unsigned char* MIST_SALT,
     const unsigned char* MIST_CIPHERTEXT,
     const long long ciphertext_length,
-    const unsigned char* MIST_PASSPHRASE,
+    const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_PASSPHRASE variable!
-    if (!check_libsodium) return libsodium_initialization_error;
+    if (!check_libsodium()) return libsodium_initialization_error;
 
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
@@ -67,13 +80,17 @@ result MIST_DECRYPT_SEED(
     if (crypto_pwhash(
         encryption_key,
         encryption_key_length,
-        strlen(MIST_PASSPHRASE),
-        salt,
+        MIST_PASSPHRASE,
+        passphrase_length,
+        MIST_SALT,
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE,
         crypto_pwhash_ALG_ARGON2ID13
-    ) != 0)
-        return out_of_memory;
+    ) != 0) {
+        sodium_memzero(encryption_key, encryption_key_length);
+
+        return seed_hashing_error;
+    }
 
     if (crypto_aead_xchacha20poly1305_ietf_decrypt(
         output,
@@ -85,8 +102,11 @@ result MIST_DECRYPT_SEED(
         0,
         MIST_NONCE,
         MIST_ENCRYPTION_KEY
-    ) != 0)
+    ) != 0) {
+        sodium_memzero(encryption_key, encryption_key_length);
+
         return seed_decryption_error;
+    }
 
     sodium_memzero(encryption_key, encryption_key_length);
 
