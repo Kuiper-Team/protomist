@@ -5,6 +5,6 @@
 
 #include "result.h"
 
-bool libsodium_check();
+bool check_libsodium();
 
 #endif
