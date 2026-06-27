@@ -2,38 +2,50 @@
 
 #include <sodium.h>
 #include <string.h>
-#include <uninorm.h>
 
 #include "constants.h"
 #include "helpers.h"
 #include "result.h"
 #include "types.h"
 
-result MIST_SEED_GENERATE_MNEMONIC_SENTENCE( //WORK IN PROGRESS
+#include "wordlists/apply.h"
+
+result MIST_SEED_GENERATE_MNEMONIC_SENTENCE(
     unsigned char* output,
 
-    const unsigned char* entropy
+    const bip39_wordlist_language language
 ) {
-    //UTF-8 NFKD normalization using uninorm.h
+    unsigned char bip39_entropy[MIST_SEED_ENTROPY_SIZE];
+    randombytes_buf(bip39_entropy, sizeof(bip39_entropy));
+
+    unsigned char checksum_input[MIST_SEED_CHECKSUM_INPUT_SIZE];
+    memcpy(checksum_input, bip39_entropy, MIST_SEED_CHECKSUM_INPUT_SIZE);
+
+    unsigned char checksum[crypto_hash_sha256_BYTES];
+    crypto_hash_sha256(
+        checksum,
+        checksum_input,
+        sizeof(checksum_input)
+
+    apply_wordlist( //Not yet implemented.
+        output,
+        bip39_entropy,
+        language
+    )
+
+    sodium_memzero(bip39_entropy);
+    sodium_memzero(checksum_input);
+    sodium_memzero(checksum);
+
     return success;
 }
 
 result MIST_GENERATE_SEED(
     unsigned char* output,
 
-    const unsigned char* MIST_SEED_MNEMONIC_SENTENCE //Whitespace-seperated
+    const unsigned char* MIST_SEED_MNEMONIC_SENTENCE
 ) {
-    unsigned char bip39_entropy[MIST_SEED_ENTROPY_SIZE];
-    randombytes_buf(bip39_entropy, sizeof(bip39_entropy));
-
-    unsigned char checksum[crypto_hash_sha256_BYTES];
-    crypto_hash_sha256(
-        checksum,
-        bip39_entropy,
-        sizeof(bip39_entropy)
-    );
-
-    custom_pbkdf2_hmac_sha512( //WORK IN PROGRESS (custom_pbkdf2_hmac_sha512.h)
+    custom_pbkdf2_hmac_sha512( //Defined at custom_pbkdf2_hmac_sha512.h
         output,
         MIST_SEED_MNEMONIC_SENTENCE,
         seed_generation_salt,

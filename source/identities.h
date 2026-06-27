@@ -5,9 +5,7 @@
 #include "types.h"
 
 result MIST_SEED_GENERATE_MNEMONIC_SENTENCE(
-    unsigned char* output,
-
-    const unsigned char* entropy
+    unsigned char* output
 );
 
 result MIST_GENERATE_SEED(
