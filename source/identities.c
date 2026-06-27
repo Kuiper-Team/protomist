@@ -10,7 +10,7 @@
 
 #include "wordlists/apply.h"
 
-result MIST_SEED_GENERATE_MNEMONIC_SENTENCE(
+result MIST_GENERATE_MNEMONIC_SENTENCE(
     unsigned char* output,
 
     const bip39_wordlist_language language
