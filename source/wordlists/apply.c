@@ -1,6 +1,7 @@
 #include "apply.h"
 
-#include <uninorm.h> //We're going to use libunistring for UTF-8 NFKD normalization as specified in BIP-39.
+//Wordlists: UTF-8 NFKD normalization is preprocessed.
+//User input: UTF-8 NFKD normalization is done by the caller.
 
 result apply_wordlist( //WORK IN PROGRESS
     char* output,
