@@ -1,4 +1,4 @@
-#include "identities.h"
+#include "identity.h"
 
 #include <sodium.h>
 #include <string.h>
@@ -26,6 +26,7 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         checksum,
         checksum_input,
         sizeof(checksum_input)
+    );
 
     apply_wordlist( //Not yet implemented.
         output,
@@ -92,7 +93,7 @@ result MIST_ENCRYPT_SEED(
         output,
         &output_length,
         MIST_SEED,
-        MIST_SEED_SIZE, //Defined in constants.h
+        MIST_SEED_SIZE, //Defined at constants.h
         NULL,
         0,
         NULL,
@@ -158,5 +159,17 @@ result MIST_DECRYPT_SEED(
 
     sodium_memzero(encryption_key, encryption_key_length);
 
+    return success;
+}
+
+result MIST_RESTORE_IDENTITY( //WIP
+    unsigned char* MIST_ID_OUTPUT,
+    unsigned char* curve25519_public_output,
+    unsigned char* curve25519_private_output,
+    unsigned char* ed25519_public_output,
+    unsigned char* ed25519_private_output,
+
+    unsigned char* MIST_SEED
+) {
     return success;
 }
