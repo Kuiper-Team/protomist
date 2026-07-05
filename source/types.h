@@ -3,25 +3,30 @@
 
 #include "constants.h"
 
-//Work in progress
-
 typedef struct {
     unsigned char bytes[MIST_SEED_SIZE];
 } seed;
 
+//BIP-39
+
+typedef struct {
+    unsigned char* key, //Bytes
+    char* value //String
+} bip39_wordlist_pair;
+
 typedef enum {
-    english,
-    japanese,
-    korean,
-    spanish,
-    chinese_simplified,
-    chinese_traditional,
-    french,
-    italian,
-    czech,
-    portuguese,
-    russian,
-    turkish
+    en, //English
+    ja, //Japanese
+    ko, //Korean
+    es, //Spanish
+    zh_HANS, //Chinese (Simplified)
+    zh_HANT, //Chinese (Traditional)
+    fr, //French
+    it, //Italian
+    cs, //Czech
+    pt, //Portuguese
+    ru, //Russian
+    tr //Turkish
 } bip39_wordlist_language;
 
 #endif

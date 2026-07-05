@@ -28,7 +28,7 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         sizeof(checksum_input)
     );
 
-    apply_wordlist( //Not yet implemented.
+    apply_wordlist(
         output,
         bip39_entropy,
         language
@@ -67,7 +67,7 @@ result MIST_ENCRYPT_SEED(
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables!
-    if (!check_libsodium()) return libsodium_initialization_error;
+    if (!check_libsodium()) return libsodium_initialization_error; //Should be get rid of
 
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
@@ -162,7 +162,7 @@ result MIST_DECRYPT_SEED(
     return success;
 }
 
-result MIST_RESTORE_IDENTITY( //WIP
+result MIST_RESTORE_KEYS( //WIP    SEED -> CURVE25519, ED25519
     unsigned char* MIST_ID_OUTPUT,
     unsigned char* curve25519_public_output,
     unsigned char* curve25519_private_output,

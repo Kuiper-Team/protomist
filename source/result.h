@@ -9,7 +9,9 @@ typedef enum {
 
     seed_hashing_error,
     seed_encryption_error,
-    seed_decryption_error
+    seed_decryption_error,
+
+    language_unavailable
 } result;
 
 #endif
