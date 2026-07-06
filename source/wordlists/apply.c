@@ -8,7 +8,7 @@
 
 #include "languages/en.h"
 
-//protomist doesn't have a normalization function.
+//protomist doesn't include a normalization function.
 //For wordlists, UTF-8 NFKD normalization is preprocessed.
 //For user MIST_ENTROPY, it is done by the caller.
 
@@ -38,7 +38,15 @@ result group_bits_in_11( //ONLY ENTROPY + CHECKSUM AS INPUT! NOT GENERAL PURPOSE
         unsigned int chunk1 = (MIST_ENTROPY[start_index] & chunk1_mask) >> relative_start_bit;
         unsigned int chunk2 = (MIST_ENTROPY[end_index] & chunk2_mask);
 
-        output[index] = (chunk1 << (relative_end_bit + 1)) | chunk2;
+        if (end_index - start_index == 2) { //If a third chunk is necessary (DUMB SOLUTION)
+            int middle_index = start_index + 1;
+
+            unsigned int middle_chunk = MIST_ENTROPY[middle_index];
+
+            output[index] = (chunk1 << (relative_end_bit + 1 + 8) | (middle_chunk << 8) | chunk2;
+        } else {
+            output[index] = (chunk1 << (relative_end_bit + 1)) | chunk2;
+        }
     }
     //To fix: In some cases, there is a need for a third chunk.
 
