@@ -4,14 +4,18 @@
 #include "result.h"
 #include "types.h"
 
+#include <stddef.h>
+
 result MIST_GENERATE_MNEMONIC_SENTENCE(
-    unsigned char* output
+    unsigned char* output,
+
+    const bip39_wordlist_language language 
 );
 
 result MIST_GENERATE_SEED(
     unsigned char* output,
 
-    unsigned char* MIST_SEED_MNEMONIC_SENTENCE
+    const unsigned char* MIST_SEED_MNEMONIC_SENTENCE
 );
 
 result MIST_ENCRYPT_SEED(

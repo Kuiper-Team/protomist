@@ -4,6 +4,12 @@
 #include "../result.h"
 #include "../types.h"
 
+result group_bits_in_11(
+    unsigned int* output,
+
+    const unsigned char* MIST_ENTROPY
+);
+
 result apply_wordlist(
     char* output,
 

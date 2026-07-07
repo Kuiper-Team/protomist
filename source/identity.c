@@ -1,9 +1,11 @@
 #include "identity.h"
 
 #include <sodium.h>
+#include <stddef.h>
 #include <string.h>
 
 #include "constants.h"
+#include "custom_pbkdf2_hmac_sha512.h"
 #include "helpers.h"
 #include "result.h"
 #include "types.h"
@@ -32,7 +34,7 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         output,
         bip39_entropy,
         language
-    )
+    );
 
     sodium_memzero(bip39_entropy);
     sodium_memzero(checksum_input);
@@ -150,7 +152,7 @@ result MIST_DECRYPT_SEED(
         NULL,
         0,
         MIST_NONCE,
-        MIST_ENCRYPTION_KEY
+        encryption_key
     ) != 0) {
         sodium_memzero(encryption_key, encryption_key_length);
 

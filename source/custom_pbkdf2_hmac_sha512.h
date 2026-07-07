@@ -1,6 +1,9 @@
 #ifndef custom_pbkdf2_hmac_sha512_h
 #define custom_pbkdf2_hmac_sha512_h
 
+#include <stddef.h>
+#include <stdint.h>
+
 void BE(
     unsigned char* output,
     uint32_t i
@@ -15,7 +18,7 @@ int custom_U(
 );
 
 int custom_F(
-    unsigned char* output
+    unsigned char* output,
 
     const unsigned char* Password,
     const unsigned char* Salt,
@@ -23,12 +26,12 @@ int custom_F(
     const uint32_t i
 );
 
-custom_pbkdf2_hmac_sha512(
+int custom_pbkdf2_hmac_sha512(
     unsigned char* DK,
 
     const unsigned char* Password,
     const unsigned char* Salt,
-    const long long c,
+    const int c
 );
 
 #endif

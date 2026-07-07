@@ -3,15 +3,11 @@
 
 #include "constants.h"
 
-typedef struct {
-    unsigned char bytes[MIST_SEED_SIZE];
-} seed;
-
 //BIP-39
 
 typedef struct {
-    unsigned char* key, //Bytes
-    char* value //String
+    unsigned char* key; //Bytes
+    char* value; //String
 } bip39_wordlist_pair;
 
 typedef enum {
