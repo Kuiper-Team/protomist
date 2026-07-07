@@ -1,12 +1,14 @@
 #ifndef custom_pbkdf2_hmac_sha512_h
 #define custom_pbkdf2_hmac_sha512_h
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
+bool is_big_endian();
+
 void BE(
-    unsigned char* output,
-    uint32_t i
+    int32_t i
 );
 
 int custom_U(

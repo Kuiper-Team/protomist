@@ -11,7 +11,7 @@
 //https://en.wikipedia.org/wiki/PBKDF2
 //https://doc.libsodium.org/advanced/hmac-sha2#hmac-sha-512
 
-bool is_big_endian() {
+bool is_big_endian() { //From https://github.com/BaseMax/c-binary-serialization, under MIT License.
     union {
         uint32_t i;
         uint8_t c[4];
