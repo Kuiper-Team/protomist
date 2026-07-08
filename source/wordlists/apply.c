@@ -6,7 +6,7 @@
 #include "../result.h"
 #include "../types.h"
 
-#include "languages/en.h"
+#include "languages.h"
 
 //protomist doesn't include a normalization function.
 //For wordlists, UTF-8 NFKD normalization is preprocessed.

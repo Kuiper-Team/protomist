@@ -12,17 +12,17 @@ typedef struct {
 
 typedef enum {
     en, //English
-    ja, //Japanese
-    ko, //Korean
+    cs, //Czech
     es, //Spanish
-    zh_HANS, //Chinese (Simplified)
-    zh_HANT, //Chinese (Traditional)
     fr, //French
     it, //Italian
-    cs, //Czech
+    ja, //Japanese
+    ko, //Korean
     pt, //Portuguese
     ru, //Russian
-    tr //Turkish
+    tr, //Turkish
+    zh_HANS, //Chinese (Simplified)
+    zh_HANT //Chinese (Traditional)
 } bip39_wordlist_language;
 
 #endif
