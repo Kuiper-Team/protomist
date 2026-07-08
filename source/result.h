@@ -11,7 +11,10 @@ typedef enum {
     seed_encryption_error,
     seed_decryption_error,
 
-    language_unavailable
+    invalid_wordlist,
+
+    bech32_encoding_error,
+    bech32_decoding_error
 } result;
 
 #endif

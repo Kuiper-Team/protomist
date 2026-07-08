@@ -13,7 +13,9 @@
 #define seed_generation_salt_size (sizeof(seed_generation_salt) - 1)
 #define seed_generation_U1_concatenated_size (seed_generation_salt_size + 4) //32 bits = 4 bytes.
 #define seed_generation_Un_concatenated_size (seed_generation_salt_size + seed_generation_hlen)
-
 #define bip39_wordlist_size 2048
+
+#define bech32m_encoding "bech32m"
+#define bech32m_hrp_1 "mist1"
 
 #endif

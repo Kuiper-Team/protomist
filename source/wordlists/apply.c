@@ -97,7 +97,7 @@ result apply_wordlist(
             list_pointer = tr_list;
             break;
         default:
-            return language_unavailable;
+            return invalid_wordlist;
     }
 
     *(list_pointer + word_index);
