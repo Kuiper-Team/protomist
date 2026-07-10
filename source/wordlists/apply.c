@@ -1,10 +1,11 @@
 #include "apply.h"
 
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../constants.h"
 #include "../result.h"
-#include "../types.h"
 
 #include "languages.h"
 
@@ -13,7 +14,7 @@
 //For user MIST_ENTROPY, it is done by the caller.
 
 result group_bits_in_11( //ONLY ENTROPY + CHECKSUM AS INPUT! NOT GENERAL PURPOSE!
-    unsigned int* output,
+    int* output,
 
     const unsigned char* MIST_ENTROPY //An array consisting of individual bytes
 ) {
@@ -48,59 +49,73 @@ result group_bits_in_11( //ONLY ENTROPY + CHECKSUM AS INPUT! NOT GENERAL PURPOSE
             output[index] = (chunk1 << (relative_end_bit + 1)) | chunk2;
         }
     }
-    //To fix: In some cases, there is a need for a third chunk.
+    //To fix: In some cases, there is a need for a third chunk (replace the dumb solution).
 
-    result success;
+    return success;
 }
 
-result apply_wordlist(
-    char* output,
+result apply_wordlist( //Example: ["abandon", ...]
+    char*** output, //Don't forge to free(). Also the size should be MIST_SEED_MNEMONIC_WORDS.
 
     const unsigned char* MIST_ENTROPY,
-    const bip39_wordlist_language language
+    const char** list_pointer //A const char* array from wordlist/languages.h, such as en_list.
 ) {
-    bip39_wordlist_pair* list_pointer;
-    switch (language) {
-        case en:
-            list_pointer = en_list;
-            break;
-        case ja:
-            list_pointer = ja_list;
-            break;
-        case ko:
-            list_pointer = ko_list;
-            break;
-        case es:
-            list_pointer = es_list;
-            break;
-        case zh_HANS:
-            list_pointer = zh_HANS_list;
-            break;
-        case zh_HANT:
-            list_pointer = zh_HANT_list;
-            break;
-        case fr:
-            list_pointer = fr_list;
-            break;
-        case it:
-            list_pointer = it_list;
-            break;
-        case cs:
-            list_pointer = cs_list;
-            break;
-        case pt:
-            list_pointer = pt_list;
-            break;
-        case ru:
-            list_pointer = ru_list;
-        case tr:
-            list_pointer = tr_list;
-            break;
-        default:
-            return invalid_wordlist;
+    int word_indices[MIST_SEED_MNEMONIC_WORDS];
+    group_bits_in_11(word_indices, MIST_ENTROPY);
+
+    for (int r = 0; r < MIST_SEED_MNEMONIC_WORDS; r++) {
+        const int word_index = word_indices[r];
+
+        const char* word = list_pointer[word_index];
+        const size_t word_size = strlen(word) + 1;
+
+        (*output)[r] = malloc(word_size * sizeof(char));
+        if ((*output)[r] == NULL)
+            return out_of_memory;
+
+        strcpy((*output)[r], word);
     }
 
-    *(list_pointer + word_index);
+    return success;
+}
+
+result MIST_MNEMONIC_SENTENCE_JOIN(
+    char** output,
+    size_t* output_length,
+
+    const char** MIST_MNEMONIC_SENTENCE
+) {
+    *output_length = 0;
+
+    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
+        const char* word = MIST_MNEMONIC_SENTENCE[index];
+        *output_length += strlen(word);
+    }
+    const size_t space_count = MIST_SEED_MNEMONIC_WORDS - 1;
+    *output_length += space_count;
+
+    const size_t output_size = *output_length + 1;
+    *output = malloc(output_size * sizeof(char));
+    if (*output == NULL)
+        return out_of_memory;
+
+    (*output)[0] = '\0';
+
+    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
+        const char* word = MIST_MNEMONIC_SENTENCE[index];
+        const size_t word_length = strlen(word);
+        const size_t word_size = word_length + 1;
+
+        const size_t current_size = *output_length; 
+
+        if (index != MIST_SEED_MNEMONIC_WORDS - 1) { //Unless it's the last index, append space.
+            char space_trailed[word_size + 1] = "";
+            strcat(space_trailed, MIST_SEED_MNEMONIC_SPACE_CHARACTER);
+
+            strcat(*output, space_trailed);
+        }
+        strcat(*output, word);
+    }
 
     return success;
 }

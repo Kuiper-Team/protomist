@@ -8,14 +8,14 @@
 #include "custom_pbkdf2_hmac_sha512.h"
 #include "helpers.h"
 #include "result.h"
-#include "types.h"
 
 #include "wordlists/apply.h"
+#include "wordlist/languages.h"
 
 result MIST_GENERATE_MNEMONIC_SENTENCE(
-    unsigned char* output,
+    unsigned char** output,
 
-    const bip39_wordlist_language language
+    const char** list_pointer
 ) {
     unsigned char bip39_entropy[MIST_SEED_ENTROPY_SIZE];
     randombytes_buf(bip39_entropy, sizeof(bip39_entropy));
@@ -31,9 +31,9 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
     );
 
     apply_wordlist(
-        output,
+        &output,
         bip39_entropy,
-        language
+        list_pointer
     );
 
     sodium_memzero(bip39_entropy);
@@ -44,13 +44,17 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
 }
 
 result MIST_GENERATE_SEED(
-    unsigned char* output,
+    unsigned char** output,
 
-    const unsigned char* MIST_SEED_MNEMONIC_SENTENCE
+    const char** MIST_SEED_MNEMONIC_SENTENCE
 ) {
+    char* mnemonic_sentence;
+    char* mnemonic_sentence_length;
+    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, mnemonic_sentence_length);
+
     custom_pbkdf2_hmac_sha512( //Defined at custom_pbkdf2_hmac_sha512.h
-        output,
-        MIST_SEED_MNEMONIC_SENTENCE,
+        &output,
+        mnemonic_sentence,
         seed_generation_salt,
         MIST_SEED_ITERATIONS,
         MIST_SEED_SIZE
@@ -60,22 +64,23 @@ result MIST_GENERATE_SEED(
 }
 
 result MIST_ENCRYPT_SEED(
-    unsigned char* output,
+    unsigned char** output,
     unsigned long long output_length,
-    unsigned char* MIST_NONCE_OUTPUT,
-    unsigned char* MIST_SALT_OUTPUT,
+    unsigned char** MIST_NONCE_OUTPUT,
+    unsigned char** MIST_SALT_OUTPUT,
 
     const unsigned char* MIST_SEED,
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables!
-    if (!check_libsodium()) return libsodium_initialization_error; //Should be get rid of
+    if (!check_libsodium())
+        return libsodium_initialization_error; //Should be get rid of
 
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
 
-    randombytes_buf(MIST_NONCE_OUTPUT, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
-    randombytes_buf(MIST_SALT_OUTPUT, crypto_pwhash_SALTBYTES);
+    randombytes_buf(&MIST_NONCE_OUTPUT, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
+    randombytes_buf(&MIST_SALT_OUTPUT, crypto_pwhash_SALTBYTES);
     if (crypto_pwhash(
         encryption_key,
         encryption_key_length,
@@ -92,7 +97,7 @@ result MIST_ENCRYPT_SEED(
     }
 
     if(crypto_aead_xchacha20poly1305_ietf_encrypt(
-        output,
+        &output,
         &output_length,
         MIST_SEED,
         MIST_SEED_SIZE, //Defined at constants.h
@@ -113,7 +118,7 @@ result MIST_ENCRYPT_SEED(
 }
 
 result MIST_DECRYPT_SEED(
-    unsigned char* output,
+    unsigned char** output,
     unsigned long long output_length,
 
     const unsigned char* MIST_NONCE,
@@ -123,7 +128,8 @@ result MIST_DECRYPT_SEED(
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_PASSPHRASE variable!
-    if (!check_libsodium()) return libsodium_initialization_error;
+    if (!check_libsodium())
+        return libsodium_initialization_error;
 
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
@@ -144,7 +150,7 @@ result MIST_DECRYPT_SEED(
     }
 
     if (crypto_aead_xchacha20poly1305_ietf_decrypt(
-        output,
+        &output,
         &output_length,
         NULL,
         MIST_CIPHERTEXT,
@@ -165,11 +171,11 @@ result MIST_DECRYPT_SEED(
 }
 
 result MIST_RESTORE_KEYS( //WIP    SEED -> CURVE25519, ED25519
-    unsigned char* MIST_ID_OUTPUT,
-    unsigned char* curve25519_public_output,
-    unsigned char* curve25519_private_output,
-    unsigned char* ed25519_public_output,
-    unsigned char* ed25519_private_output,
+    unsigned char** MIST_ID_OUTPUT,
+    unsigned char** curve25519_public_output,
+    unsigned char** curve25519_private_output,
+    unsigned char** ed25519_public_output,
+    unsigned char** ed25519_private_output,
 
     unsigned char* MIST_SEED
 ) {
