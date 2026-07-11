@@ -17,6 +17,6 @@
 #define bip39_wordlist_size 2048
 
 #define bech32m_encoding "bech32m"
-#define bech32m_hrp_1 "mist1"
+#define bech32m_hrp "mist1"
 
 #endif

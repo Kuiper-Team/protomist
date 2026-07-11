@@ -14,7 +14,7 @@ result MIST_BECH32M_ENCODE(
 ) {
     std::vector<uint8_t> data(MIST_DECODED, MIST_DECODED + decoded_size); //Converting array to vector
 
-    std::string encoded_cpp = Encode(Encoding::BECH32M, bech32m_hrp_1, data);
+    std::string encoded_cpp = Encode(Encoding::BECH32M, bech32m_hrp, data);
     const char* encoded = encoded_cpp.c_str();
     strcpy(*output, encoded);
 
