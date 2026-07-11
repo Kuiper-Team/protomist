@@ -8,10 +8,20 @@ extern "C" {
 #endif
 
 result MIST_BECH32M_ENCODE(
-    unsigned char* output
+    char* output,
+
+    const unsigned char* MIST_DECODED,
+    const size_t decoded_size
 );
+
 result MIST_BECH32M_DECODE(
-    unsigned char* output
+    unsigned char* output,
+
+    const unsigned char* MIST_ENCODED
+);
+
+result MIST_BECH32M_VALIDATE(,
+    const char* MIST_ENCODED
 );
 
 #ifdef __cplusplus
