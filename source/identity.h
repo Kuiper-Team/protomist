@@ -2,34 +2,34 @@
 #define identities_h
 
 #include "result.h"
-#include "types.h"
+#include "wordlists/apply.h"
 
 #include <stddef.h>
 
 result MIST_GENERATE_MNEMONIC_SENTENCE(
-    unsigned char* output,
+    char** output,
 
-    const bip39_wordlist_language language 
+    const char** list_pointer 
 );
 
 result MIST_GENERATE_SEED(
-    unsigned char* output,
+    unsigned char** output,
 
-    const unsigned char* MIST_SEED_MNEMONIC_SENTENCE
+    const char** MIST_SEED_MNEMONIC_SENTENCE
 );
 
 result MIST_ENCRYPT_SEED(
-    unsigned char* output,
+    unsigned char** output,
     unsigned long long output_length,
-    unsigned char* MIST_NONCE_OUTPUT,
-    unsigned char* MIST_SALT_OUTPUT,
+    unsigned char** MIST_NONCE_OUTPUT,
+    unsigned char** MIST_SALT_OUTPUT,
 
     const unsigned char* MIST_SEED,
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 );
 result MIST_DECRYPT_SEED(
-    unsigned char* output,
+    unsigned char** output,
     unsigned long long output_length,
 
     const unsigned char* MIST_NONCE,
@@ -38,6 +38,16 @@ result MIST_DECRYPT_SEED(
     const long long ciphertext_length,
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
+);
+
+result MIST_RESTORE_KEYS(
+    unsigned char** MIST_ID_OUTPUT,
+    unsigned char** curve25519_public_output,
+    unsigned char** curve25519_private_output,
+    unsigned char** ed25519_public_output,
+    unsigned char** ed25519_private_output,
+
+    const unsigned char* MIST_SEED
 );
 
 #endif

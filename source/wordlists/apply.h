@@ -1,20 +1,29 @@
 #ifndef wordlists_apply_h
 #define wordlists_apply_h
 
+#include <stddef.h>
+
 #include "../result.h"
 #include "../types.h"
 
 result group_bits_in_11(
-    unsigned int* output,
+    int* output,
 
     const unsigned char* MIST_ENTROPY
 );
 
 result apply_wordlist(
-    char* output,
+    char*** output,
 
     const unsigned char* MIST_ENTROPY,
-    const bip39_wordlist_language language
+    const char** list_pointer
+);
+
+result MIST_MNEMONIC_SENTENCE_JOIN(
+    char** output,
+    size_t* output_length,
+
+    const char** MIST_MNEMONIC_SENTENCE
 );
 
 #endif

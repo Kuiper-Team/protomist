@@ -20,7 +20,9 @@ bool is_big_endian() { //From https://github.com/BaseMax/c-binary-serialization,
     return test.c[0] == 1;
 }
 
-int32_t BE(int32_t i) {
+int32_t BE(
+    int32_t i
+) {
    return (int32_t) htonl((uint32_t) i);
 }
 
@@ -87,7 +89,8 @@ int custom_pbkdf2_hmac_sha512(
 
     const unsigned char* Password,
     const unsigned char* Salt,
-    const int c
+    const int c,
+    const uint32_t i
 ) {
     //DK = T1 || T2 || ... || T(dkLen/hLen)
     //Concatenation needed

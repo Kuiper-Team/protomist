@@ -10,10 +10,9 @@
 #include "result.h"
 
 #include "wordlists/apply.h"
-#include "wordlist/languages.h"
 
 result MIST_GENERATE_MNEMONIC_SENTENCE(
-    unsigned char** output,
+    char** output,
 
     const char** list_pointer
 ) {
@@ -36,9 +35,9 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         list_pointer
     );
 
-    sodium_memzero(bip39_entropy);
-    sodium_memzero(checksum_input);
-    sodium_memzero(checksum);
+    sodium_memzero(bip39_entropy, MIST_SEED_ENTROPY_SIZE);
+    sodium_memzero(checksum_input, MIST_SEED_CHECKSUM_INPUT_SIZE);
+    sodium_memzero(checksum, crypto_hash_sha256_BYTES);
 
     return success;
 }
@@ -49,13 +48,13 @@ result MIST_GENERATE_SEED(
     const char** MIST_SEED_MNEMONIC_SENTENCE
 ) {
     char* mnemonic_sentence;
-    char* mnemonic_sentence_length;
-    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, mnemonic_sentence_length);
+    size_t mnemonic_sentence_length;
+    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, &mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
     custom_pbkdf2_hmac_sha512( //Defined at custom_pbkdf2_hmac_sha512.h
-        &output,
-        mnemonic_sentence,
-        seed_generation_salt,
+        *output,
+        (const unsigned char*) mnemonic_sentence,
+        (const unsigned char*) seed_generation_salt, //Defined at constants.h
         MIST_SEED_ITERATIONS,
         MIST_SEED_SIZE
     );
@@ -86,7 +85,7 @@ result MIST_ENCRYPT_SEED(
         encryption_key_length,
         MIST_PASSPHRASE,
         passphrase_length,
-        MIST_SALT_OUTPUT,
+        *MIST_SALT_OUTPUT,
         crypto_pwhash_OPSLIMIT_INTERACTIVE,
         crypto_pwhash_MEMLIMIT_INTERACTIVE,
         crypto_pwhash_ALG_ARGON2ID13
@@ -96,15 +95,15 @@ result MIST_ENCRYPT_SEED(
         return seed_hashing_error;
     }
 
-    if(crypto_aead_xchacha20poly1305_ietf_encrypt(
-        &output,
+    if (crypto_aead_xchacha20poly1305_ietf_encrypt(
+        *output,
         &output_length,
         MIST_SEED,
         MIST_SEED_SIZE, //Defined at constants.h
         NULL,
         0,
         NULL,
-        MIST_NONCE_OUTPUT,
+        *MIST_NONCE_OUTPUT,
         encryption_key
     ) != 0) {
         sodium_memzero(encryption_key, encryption_key_length);
@@ -150,7 +149,7 @@ result MIST_DECRYPT_SEED(
     }
 
     if (crypto_aead_xchacha20poly1305_ietf_decrypt(
-        &output,
+        *output,
         &output_length,
         NULL,
         MIST_CIPHERTEXT,
@@ -177,7 +176,7 @@ result MIST_RESTORE_KEYS( //WIP    SEED -> CURVE25519, ED25519
     unsigned char** ed25519_public_output,
     unsigned char** ed25519_private_output,
 
-    unsigned char* MIST_SEED
+    const unsigned char* MIST_SEED
 ) {
     return success;
 }

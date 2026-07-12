@@ -33,7 +33,8 @@ int custom_pbkdf2_hmac_sha512(
 
     const unsigned char* Password,
     const unsigned char* Salt,
-    const int c
+    const int c,
+    const uint32_t i
 );
 
 #endif

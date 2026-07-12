@@ -1,6 +1,7 @@
 #include "apply.h"
 
 #include <math.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -44,7 +45,7 @@ result group_bits_in_11( //ONLY ENTROPY + CHECKSUM AS INPUT! NOT GENERAL PURPOSE
 
             unsigned int middle_chunk = MIST_ENTROPY[middle_index];
 
-            output[index] = (chunk1 << (relative_end_bit + 1 + 8) | (middle_chunk << 8) | chunk2;
+            output[index] = chunk1 << (relative_end_bit + 1 + 8) | (middle_chunk << 8) | chunk2;
         } else {
             output[index] = (chunk1 << (relative_end_bit + 1)) | chunk2;
         }
@@ -69,7 +70,7 @@ result apply_wordlist( //Example: ["abandon", ...]
         const char* word = list_pointer[word_index];
         const size_t word_size = strlen(word) + 1;
 
-        (*output)[r] = malloc(word_size * sizeof(char));
+        (*output)[r] = (char*) malloc(word_size * sizeof(char));
         if ((*output)[r] == NULL)
             return out_of_memory;
 
@@ -95,7 +96,7 @@ result MIST_MNEMONIC_SENTENCE_JOIN(
     *output_length += space_count;
 
     const size_t output_size = *output_length + 1;
-    *output = malloc(output_size * sizeof(char));
+    *output = (char*) malloc(output_size * sizeof(char));
     if (*output == NULL)
         return out_of_memory;
 
@@ -106,11 +107,9 @@ result MIST_MNEMONIC_SENTENCE_JOIN(
         const size_t word_length = strlen(word);
         const size_t word_size = word_length + 1;
 
-        const size_t current_size = *output_length; 
-
         if (index != MIST_SEED_MNEMONIC_WORDS - 1) { //Unless it's the last index, append space.
             char space_trailed[word_size + 1] = "";
-            strcat(space_trailed, MIST_SEED_MNEMONIC_SPACE_CHARACTER);
+            strcat(space_trailed, MIST_SEED_MNEMONIC_SPACE);
 
             strcat(*output, space_trailed);
         }
