@@ -6,10 +6,12 @@
 #include "../source/wordlists/languages.h"
 
 int main() {
-    char mnemonic_sentence[MIST_SEED_MNEMONIC_WORDS];
-    char* mnemonic_sentence_pointer = mnemonic_sentence;
-    MIST_GENERATE_MNEMONIC_SENTENCE(&mnemonic_sentence_pointer, english_list);
+    char* mnemonic_sentence[MIST_SEED_MNEMONIC_WORDS];
+    MIST_GENERATE_MNEMONIC_SENTENCE(mnemonic_sentence, english_list);
 
-    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++)
-        assert(mnemonic_sentence[index] != NULL);
+    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
+        char* word = mnemonic_sentence[index];
+        assert(word != NULL);
+        printf("%s ", word);
+    }
 }

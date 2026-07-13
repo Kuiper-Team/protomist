@@ -6,7 +6,6 @@
 
 #include "constants.h"
 #include "custom_pbkdf2_hmac_sha512.h"
-#include "helpers.h"
 #include "result.h"
 
 #include "wordlists/apply.h"
@@ -72,9 +71,6 @@ result MIST_ENCRYPT_SEED(
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables!
-    if (!check_libsodium())
-        return libsodium_initialization_error; //Should be get rid of
-
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
 
@@ -127,9 +123,6 @@ result MIST_DECRYPT_SEED(
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
 ) { //Don't forget to wipe your MIST_PASSPHRASE variable!
-    if (!check_libsodium())
-        return libsodium_initialization_error;
-
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
 

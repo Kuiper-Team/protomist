@@ -1,5 +1,6 @@
 #include "custom_pbkdf2_hmac_sha512.h"
 
+#include <arpa/inet.h>
 #include <sodium.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -8,8 +9,10 @@
 
 #include "constants.h"
 
-//https://en.wikipedia.org/wiki/PBKDF2
-//https://doc.libsodium.org/advanced/hmac-sha2#hmac-sha-512
+/*
+https://en.wikipedia.org/wiki/PBKDF2
+https://doc.libsodium.org/advanced/hmac-sha2#hmac-sha-512
+*/
 
 bool is_big_endian() { //From https://github.com/BaseMax/c-binary-serialization, under MIT License.
     union {
@@ -20,7 +23,7 @@ bool is_big_endian() { //From https://github.com/BaseMax/c-binary-serialization,
     return test.c[0] == 1;
 }
 
-int32_t BE(
+int32_t INT_32_BE(
     int32_t i
 ) {
    return (int32_t) htonl((uint32_t) i);
@@ -33,13 +36,12 @@ int custom_U(
     const unsigned char* Salt,
     const uint32_t i
 ) {
-    uint32_t INT_32_BE;
-    BE(INT_32_BE, i);
-
     if (i == 1) {
+        const int32_t INT_32_BE_array[1] = { INT_32_BE(i) };
+
         unsigned char concatenated[seed_generation_U1_concatenated_size];
         memcpy(concatenated, Salt, seed_generation_salt_size);
-        memcpy(concatenated + seed_generation_salt_size, INT_32_BE, 4);
+        memcpy(concatenated + seed_generation_salt_size /* Pointer arithmetic */, INT_32_BE_array, 4);
 
         crypto_auth_hmacsha512(
             output,
@@ -82,6 +84,8 @@ int custom_F(
         for (uint32_t byte_index = 0; byte_index < seed_generation_hlen; byte_index++)
             output[byte_index] ^= dummy[byte_index];
     }
+
+    return 0;
 }
 
 int custom_pbkdf2_hmac_sha512(
@@ -96,4 +100,6 @@ int custom_pbkdf2_hmac_sha512(
     //Concatenation needed
     for (int step = 0; step < seed_generation_dklen_hlen_ratio; step++)
       custom_F(DK, Password, Salt, c, i);
+
+    return 0;
 }

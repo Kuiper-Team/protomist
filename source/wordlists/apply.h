@@ -2,14 +2,13 @@
 #define wordlists_apply_h
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "../result.h"
 #include "../types.h"
 
-result group_bits_in_11(
-    int* output,
-
-    const unsigned char* MIST_ENTROPY
+uint8_t bip39_shift(
+    size_t bit
 );
 
 result apply_wordlist(

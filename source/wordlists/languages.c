@@ -2051,7 +2051,6 @@ const char* english_list[bip39_wordlist_size] {
     "zero",
     "zone",
     "zoo"
-
 };
 
 const char* czech_list[bip39_wordlist_size] {
@@ -4103,7 +4102,6 @@ const char* czech_list[bip39_wordlist_size] {
     "zvrat",
     "zvukovod",
     "zvyk"
-
 };
 
 const char* chinese_traditional_list[bip39_wordlist_size] {
@@ -6155,7 +6153,6 @@ const char* chinese_traditional_list[bip39_wordlist_size] {
     "怨",
     "矮",
     "歇"
-
 };
 
 const char* turkish_list[bip39_wordlist_size] {
@@ -8207,7 +8204,6 @@ const char* turkish_list[bip39_wordlist_size] {
     "zorunlu",
     "züğürt",
     "zümre"
-
 };
 
 const char* korean_list[bip39_wordlist_size] {
@@ -10259,7 +10255,6 @@ const char* korean_list[bip39_wordlist_size] {
     "희생",
     "흰색",
     "힘껏"
-
 };
 
 const char* french_list[bip39_wordlist_size] {
@@ -12311,7 +12306,6 @@ const char* french_list[bip39_wordlist_size] {
     "zénith",
     "zeste",
     "zoologie"
-
 };
 
 const char* chinese_simplified_list[bip39_wordlist_size] {
@@ -14363,7 +14357,6 @@ const char* chinese_simplified_list[bip39_wordlist_size] {
     "怨",
     "矮",
     "歇"
-
 };
 
 const char* japanese_list[bip39_wordlist_size] {
@@ -16415,7 +16408,6 @@ const char* japanese_list[bip39_wordlist_size] {
     "わすれもの",
     "わらう",
     "われる"
-
 };
 
 const char* russian_list[bip39_wordlist_size] {
@@ -18467,7 +18459,6 @@ const char* russian_list[bip39_wordlist_size] {
     "яхта",
     "ячейка",
     "ящик"
-
 };
 
 const char* portuguese_list[bip39_wordlist_size] {
@@ -20519,7 +20510,6 @@ const char* portuguese_list[bip39_wordlist_size] {
     "zombar",
     "zoologia",
     "zumbido"
-
 };
 
 const char* italian_list[bip39_wordlist_size] {
@@ -22571,7 +22561,6 @@ const char* italian_list[bip39_wordlist_size] {
     "zufolo",
     "zulu",
     "zuppa"
-
 };
 
 const char* spanish_list[bip39_wordlist_size] {
@@ -24623,7 +24612,4 @@ const char* spanish_list[bip39_wordlist_size] {
     "zorro",
     "zumo",
     "zurdo"
-
 };
-
-#endif

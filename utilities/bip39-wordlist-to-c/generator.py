@@ -8,7 +8,6 @@ c_template = """#include "languages.h"
 
 #include "../constants.h"
 {body}
-#endif
 """
 h_template = """#ifndef languages_h
 #define languages_h
@@ -29,12 +28,12 @@ for filename in wordlists_directory.glob("*.txt"):
     with open(filename, "r") as wordlist_file:
         for line in wordlist_file:
             dummy += "    \"" + line.strip() + "\",\n"
-    dummy = dummy.rstrip(",\n") + "\n" #Remove the last comma
+    dummy = dummy.rstrip(",\n") #Remove the last comma
 
     c_generated += dummy
     c_generated += "\n};\n"
 
-    h_generated += f"\nconst char* { filename.stem }_list[bip39_wordlist_size];"
+    h_generated += f"\nextern const char* { filename.stem }_list[bip39_wordlist_size];"
 
 c_generated = c_template.format(body=c_generated)
 with open(c_path, "w", encoding="utf-8") as c_file:

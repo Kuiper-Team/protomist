@@ -7,7 +7,7 @@
 
 bool is_big_endian();
 
-void BE(
+int32_t INT_32_BE(
     int32_t i
 );
 
