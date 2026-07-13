@@ -11,9 +11,15 @@
 
 #include "languages.h"
 
-//protomist doesn't include a normalization function.
-//For wordlists, UTF-8 NFKD normalization is preprocessed.
-//For user MIST_ENTROPY, it is done by the caller.
+/*
+protomist doesn't include a normalization function.
+For wordlists, UTF-8 NFKD normalization is preprocessed.
+For user MIST_ENTROPY, it is done by the caller.
+*/
+
+/*
+This implementation is mostly on https://github.com/ciband/bip39
+*/
 
 uint8_t bip39_shift(
     size_t bit
