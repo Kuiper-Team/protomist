@@ -18,7 +18,7 @@ For user MIST_ENTROPY, it is done by the caller.
 */
 
 /*
-This implementation is mostly on https://github.com/ciband/bip39
+This implementation is based mostly on https://github.com/ciband/bip39
 */
 
 uint8_t bip39_shift(
@@ -72,7 +72,7 @@ result MIST_MNEMONIC_SENTENCE_JOIN(
     char** output,
     size_t* output_length,
 
-    const char** MIST_MNEMONIC_SENTENCE
+    const char* const* MIST_MNEMONIC_SENTENCE
 ) {
     *output_length = 0;
 
@@ -96,12 +96,14 @@ result MIST_MNEMONIC_SENTENCE_JOIN(
         const size_t word_size = word_length + 1;
 
         if (index != MIST_SEED_MNEMONIC_WORDS - 1) { //Unless it's the last index, append space.
-            char space_trailed[word_size + 1] = "";
+            char space_trailed[word_size + strlen(MIST_SEED_MNEMONIC_SPACE)];
+            strcpy(space_trailed, word);
             strcat(space_trailed, MIST_SEED_MNEMONIC_SPACE);
 
             strcat(*output, space_trailed);
+        } else {
+            strcat(*output, word);
         }
-        strcat(*output, word);
     }
 
     return success;

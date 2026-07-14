@@ -4,10 +4,10 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "bech32/wrapper.h"
 #include "constants.h"
 #include "custom_pbkdf2_hmac_sha512.h"
 #include "result.h"
-
 #include "wordlists/apply.h"
 
 result MIST_GENERATE_MNEMONIC_SENTENCE(
@@ -28,9 +28,14 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         sizeof(checksum_input)
     );
 
+    //I might as well make a concatenate_bytes() helper. Usage here would be concatenate_bytes(&mnemonic_input, bip39_entropy, checksum).
+    unsigned char mnemonic_input[sizeof(bip39_entropy) + sizeof(checksum)];
+    memcpy(mnemonic_input, bip39_entropy, sizeof(bip39_entropy));
+    memcpy(mnemonic_input + sizeof(bip39_entropy) /* Pointer arithmetic */, checksum, sizeof(checksum));
+
     apply_wordlist(
         &output,
-        bip39_entropy,
+        mnemonic_input,
         list_pointer
     );
 
@@ -42,16 +47,16 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
 }
 
 result MIST_GENERATE_SEED(
-    unsigned char** output,
+    unsigned char* output,
 
-    const char** MIST_SEED_MNEMONIC_SENTENCE
+    const char* const* MIST_SEED_MNEMONIC_SENTENCE
 ) {
     char* mnemonic_sentence;
     size_t mnemonic_sentence_length;
     MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, &mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
     custom_pbkdf2_hmac_sha512( //Defined at custom_pbkdf2_hmac_sha512.h
-        *output,
+        output,
         (const unsigned char*) mnemonic_sentence,
         (const unsigned char*) seed_generation_salt, //Defined at constants.h
         MIST_SEED_ITERATIONS,
@@ -162,14 +167,26 @@ result MIST_DECRYPT_SEED(
     return success;
 }
 
-result MIST_RESTORE_KEYS( //WIP    SEED -> CURVE25519, ED25519
-    unsigned char** MIST_ID_OUTPUT,
-    unsigned char** curve25519_public_output,
-    unsigned char** curve25519_private_output,
-    unsigned char** ed25519_public_output,
-    unsigned char** ed25519_private_output,
+result MIST_RESTORE_IDENTITY(
+    char** MIST_ADDRESS_output,
+    unsigned char* ed25519_public_output, //crypto_sign_ed25519_PUBLICKEYBYTES
+    unsigned char* ed25519_secret_output, //crypto_sign_ed25519_SECRETKEYBYTES
+    unsigned char* curve25519_public_output, //crypto_scalarmult_curve25519_BYTES
+    unsigned char* curve25519_secret_output, //crypto_scalarmult_curve25519_BYTES
 
     const unsigned char* MIST_SEED
 ) {
+    crypto_sign_seed_keypair(ed25519_public_output, ed25519_secret_output, MIST_SEED);
+
+    crypto_sign_ed25519_pk_to_curve25519(curve25519_public_output, ed25519_public_output);
+    crypto_sign_ed25519_sk_to_curve25519(curve25519_secret_output, ed25519_secret_output);
+
+    MIST_BECH32M_ENCODE(
+        MIST_ADDRESS_output,
+
+        ed25519_public_output,
+        crypto_sign_ed25519_PUBLICKEYBYTES
+    );
+
     return success;
 }

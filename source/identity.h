@@ -13,9 +13,9 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
 );
 
 result MIST_GENERATE_SEED(
-    unsigned char** output,
+    unsigned char* output,
 
-    const char** MIST_SEED_MNEMONIC_SENTENCE
+    const char* const* MIST_SEED_MNEMONIC_SENTENCE
 );
 
 result MIST_ENCRYPT_SEED(
@@ -40,12 +40,12 @@ result MIST_DECRYPT_SEED(
     const size_t passphrase_length
 );
 
-result MIST_RESTORE_KEYS(
-    unsigned char** MIST_ID_OUTPUT,
-    unsigned char** curve25519_public_output,
-    unsigned char** curve25519_private_output,
-    unsigned char** ed25519_public_output,
-    unsigned char** ed25519_private_output,
+result MIST_RESTORE_IDENTITY(
+    char** MIST_ADDRESS_output,
+    unsigned char* ed25519_public_output,
+    unsigned char* ed25519_secret_output,
+    unsigned char* curve25519_public_output,
+    unsigned char* curve25519_secret_output,
 
     const unsigned char* MIST_SEED
 );

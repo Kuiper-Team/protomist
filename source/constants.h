@@ -20,4 +20,6 @@
 #define bech32m_encoding "bech32m"
 #define bech32m_hrp "mist1"
 
+#define ed25519_pk_size 
+
 #endif

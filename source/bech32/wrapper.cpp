@@ -7,15 +7,17 @@
 #include "../result.h"
 
 result MIST_BECH32M_ENCODE(
-    unsigned char** output,
+    char** output,
 
     const unsigned char* MIST_DECODED,
     const size_t decoded_size
 ) {
     std::vector<uint8_t> data(MIST_DECODED, MIST_DECODED + decoded_size); //Converting array to vector
 
-    std::string encoded_cpp = Encode(Encoding::BECH32M, bech32m_hrp, data);
+    std::string encoded_cpp = bech32::Encode(bech32::Encoding::BECH32M, bech32m_hrp, data);
     const char* encoded = encoded_cpp.c_str();
+
+    *output = (char*) malloc(strlen(encoded) + 1);
     strcpy(*output, encoded);
 
     return success;
@@ -24,14 +26,20 @@ result MIST_BECH32M_ENCODE(
 result MIST_BECH32M_DECODE(
     unsigned char** output,
 
-    const unsigned char* MIST_ENCODED
+    const char* MIST_ENCODED
 ) {
-    struct DecodeResult decoded = Decode(MIST_ENCODED, CharLimit::BECH32);
-    if (decoded.empty())
+    size_t encoded_size = strlen(MIST_ENCODED) + 1;
+    std::string encoded(MIST_ENCODED, encoded_size);
+
+    struct bech32::DecodeResult decoded = bech32::Decode(encoded, bech32::CharLimit::BECH32);
+    if (decoded.encoding == bech32::Encoding::INVALID)
         return bech32m_decoding_error;
 
+    std::vector<uint8_t> data = decoded.data;
     uint8_t* output_uint8_t;
-    memcpy(output_uint8_t, &decoded.data[0]);
+
+    const uint8_t* data_array = &(data[0]);
+    memcpy(output_uint8_t, data_array, data.size());
 
     size_t output_size = decoded.data.size();
 
@@ -44,9 +52,10 @@ result MIST_BECH32M_DECODE(
 result MIST_BECH32M_VALIDATE(
     const char* MIST_ENCODED
 ) {
-    std::string encoded = str(MIST_ENCODED);
+    size_t encoded_size = strlen(MIST_ENCODED) + 1;
+    std::string encoded(MIST_ENCODED, encoded_size);
 
-    auto errors = LocateErrors(encoded, CharLimit::BECH32);
+    auto errors = bech32::LocateErrors(encoded, bech32::CharLimit::BECH32);
     if (errors.first.empty())
         return success;
     else
