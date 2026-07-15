@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux
-# Edit at https://www.toptal.com/developers/gitignore?templates=c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux
+# Created by https://www.toptal.com/developers/gitignore/api/c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux,macos
 
 ### C ###
 # Prerequisites
@@ -195,6 +195,38 @@ fabric.properties
 
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### macOS Patch ###
+# iCloud generated files
+*.icloud
 
 ### Vim ###
 # Swap
@@ -646,4 +678,4 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux
+# End of https://www.toptal.com/developers/gitignore/api/c,c++,cmake,visualstudio,jetbrains+all,visualstudiocode,vim,windows,linux,macos
