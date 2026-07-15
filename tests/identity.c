@@ -17,6 +17,7 @@ int main() {
     unsigned char seed[MIST_SEED_SIZE];
     MIST_GENERATE_SEED(
         seed,
+        sizeof(seed),
         mnemonic_sentence
     );
 

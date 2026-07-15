@@ -1,7 +1,7 @@
 #ifndef constants_h
 #define constants_h
 
-#define MIST_SEED_SIZE 64
+#define MIST_SEED_SIZE 64 //512 bits
 #define MIST_SEED_ENTROPY_SIZE 20 //160 bits
 #define MIST_SEED_CHECKSUM_INPUT_SIZE (MIST_SEED_ENTROPY_SIZE / 4) //Entropy size divided by 32 bits
 #define MIST_SEED_MNEMONIC_WORDS (MIST_SEED_ENTROPY_SIZE - MIST_SEED_CHECKSUM_INPUT_SIZE)

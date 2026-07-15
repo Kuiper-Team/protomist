@@ -12,8 +12,16 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
     const char** list_pointer 
 );
 
+result MIST_MNEMONIC_SENTENCE_JOIN(
+    char** output,
+    size_t* output_length,
+
+    const char* const* MIST_MNEMONIC_SENTENCE
+);
+
 result MIST_GENERATE_SEED(
     unsigned char* output,
+    const size_t output_size,
 
     const char* const* MIST_SEED_MNEMONIC_SENTENCE
 );

@@ -1,5 +1,6 @@
 #include "wrapper.h"
 
+#include <assert.h>
 #include <string.h>
 
 #include "bech32.h"
@@ -38,12 +39,14 @@ result MIST_BECH32M_DECODE(
     std::vector<uint8_t> data = decoded.data;
     uint8_t* output_uint8_t;
 
-    const uint8_t* data_array = &(data[0]);
+    assert(!data.empty());
+
+    const uint8_t* data_array = data.data();
     memcpy(output_uint8_t, data_array, data.size());
 
     size_t output_size = decoded.data.size();
 
-    for (int index = 0; index < output_size; index++)
+    for (size_t index = 0; index < output_size; index++)
         (*output)[index] = (unsigned char) output_uint8_t[index];
 
     return success;

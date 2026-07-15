@@ -1,12 +1,12 @@
 #include "identity.h"
 
+#include <assert.h>
 #include <sodium.h>
 #include <stddef.h>
 #include <string.h>
 
 #include "bech32/wrapper.h"
 #include "constants.h"
-#include "custom_pbkdf2_hmac_sha512.h"
 #include "result.h"
 #include "wordlists/apply.h"
 
@@ -46,22 +46,73 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
     return success;
 }
 
+result MIST_MNEMONIC_SENTENCE_JOIN(
+    char** output,
+    size_t* output_length,
+
+    const char* const* MIST_MNEMONIC_SENTENCE
+) {
+    *output_length = 0;
+
+    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
+        const char* word = MIST_MNEMONIC_SENTENCE[index];
+        *output_length += strlen(word);
+    }
+    const size_t space_count = MIST_SEED_MNEMONIC_WORDS - 1;
+    *output_length += space_count;
+
+    const size_t output_size = *output_length + 1;
+    *output = (char*) malloc(output_size * sizeof(char));
+    if (*output == NULL)
+        return out_of_memory;
+
+    (*output)[0] = '\0';
+
+    for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
+        const char* word = MIST_MNEMONIC_SENTENCE[index];
+        const size_t word_length = strlen(word);
+        const size_t word_size = word_length + 1;
+
+        if (index != MIST_SEED_MNEMONIC_WORDS - 1) { //Unless it's the last index, append space.
+            char space_trailed[word_size + strlen(MIST_SEED_MNEMONIC_SPACE)];
+            strcpy(space_trailed, word);
+            strcat(space_trailed, MIST_SEED_MNEMONIC_SPACE);
+
+            strcat(*output, space_trailed);
+        } else {
+            strcat(*output, word);
+        }
+    }
+
+    return success;
+}
+
 result MIST_GENERATE_SEED(
     unsigned char* output,
+    const size_t output_size,
 
     const char* const* MIST_SEED_MNEMONIC_SENTENCE
 ) {
+    assert(output_size == MIST_SEED_SIZE);
+
     char* mnemonic_sentence;
     size_t mnemonic_sentence_length;
     MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, &mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
-    custom_pbkdf2_hmac_sha512( //Defined at custom_pbkdf2_hmac_sha512.h
+    if(crypto_pwhash(
         output,
-        (const unsigned char*) mnemonic_sentence,
+        MIST_SEED_SIZE,
+        (const char*) mnemonic_sentence,
+        strlen(mnemonic_sentence),
         (const unsigned char*) seed_generation_salt, //Defined at constants.h
-        MIST_SEED_ITERATIONS,
-        MIST_SEED_SIZE
-    );
+        crypto_pwhash_OPSLIMIT_INTERACTIVE, //This will be replaced with the protocol standard.
+        crypto_pwhash_MEMLIMIT_INTERACTIVE, //This will be replaced with the protocol standard.
+        crypto_pwhash_ALG_ARGON2ID13
+    ) != 0)
+        return out_of_memory;
+
+    sodium_memzero(mnemonic_sentence, strlen(mnemonic_sentence) + 1);
+    sodium_memzero(&mnemonic_sentence_length, sizeof(mnemonic_sentence_length));
 
     return success;
 }
@@ -75,7 +126,7 @@ result MIST_ENCRYPT_SEED(
     const unsigned char* MIST_SEED,
     const char* MIST_PASSPHRASE,
     const size_t passphrase_length
-) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables!
+) { //Don't forget to wipe your MIST_SEED and MIST_PASSPHRASE variables upon usage!
     unsigned long long encryption_key_length = crypto_aead_xchacha20poly1305_ietf_KEYBYTES;
     unsigned char encryption_key[encryption_key_length];
 

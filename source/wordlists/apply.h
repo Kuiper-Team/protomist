@@ -18,11 +18,4 @@ result apply_wordlist(
     const char** list_pointer
 );
 
-result MIST_MNEMONIC_SENTENCE_JOIN(
-    char** output,
-    size_t* output_length,
-
-    const char* const* MIST_MNEMONIC_SENTENCE
-);
-
 #endif
