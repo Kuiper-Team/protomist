@@ -19,6 +19,7 @@ For user MIST_ENTROPY, it is done by the caller.
 
 /*
 This implementation is based mostly on https://github.com/ciband/bip39
+Copyright (c) 2018 Chris Johnson
 */
 
 uint8_t bip39_shift(

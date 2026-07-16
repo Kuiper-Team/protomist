@@ -9,6 +9,12 @@
 #include "../source/wordlists/languages.h"
 
 int main() {
+    if (sodium_init() == -1) {
+        fprintf(stderr, "ERROR: libsodium could not be initialized.");
+
+        exit(1);
+    }
+
     char* mnemonic_sentence[MIST_SEED_MNEMONIC_WORDS];
     MIST_GENERATE_MNEMONIC_SENTENCE(
         mnemonic_sentence,
