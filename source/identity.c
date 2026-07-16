@@ -47,21 +47,21 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
 }
 
 result MIST_MNEMONIC_SENTENCE_JOIN(
-    char** output,
-    size_t* output_length,
+    char** output, //Don't forget to free().
+    size_t output_length,
 
     const char* const* MIST_MNEMONIC_SENTENCE
 ) {
-    *output_length = 0;
+    output_length = 0;
 
     for (int index = 0; index < MIST_SEED_MNEMONIC_WORDS; index++) {
         const char* word = MIST_MNEMONIC_SENTENCE[index];
-        *output_length += strlen(word);
+        output_length += strlen(word);
     }
     const size_t space_count = MIST_SEED_MNEMONIC_WORDS - 1;
-    *output_length += space_count;
+    output_length += space_count;
 
-    const size_t output_size = *output_length + 1;
+    const size_t output_size = output_length + 1;
     *output = (char*) malloc(output_size * sizeof(char));
     if (*output == NULL)
         return out_of_memory;
@@ -97,7 +97,7 @@ result MIST_GENERATE_SEED(
 
     char* mnemonic_sentence;
     size_t mnemonic_sentence_length;
-    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, &mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
+    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
     if(crypto_pwhash(
         output,
@@ -219,7 +219,7 @@ result MIST_DECRYPT_SEED(
 }
 
 result MIST_RESTORE_IDENTITY(
-    char** MIST_ADDRESS_output,
+    char** MIST_ADDRESS_output, //Don't forget to free(). crypto_sign_ed25519_PUBLICKEYBYTES
     unsigned char* ed25519_public_output, //crypto_sign_ed25519_PUBLICKEYBYTES
     unsigned char* ed25519_secret_output, //crypto_sign_ed25519_SECRETKEYBYTES
     unsigned char* curve25519_public_output, //crypto_scalarmult_curve25519_BYTES
@@ -234,7 +234,7 @@ result MIST_RESTORE_IDENTITY(
 
     MIST_BECH32M_ENCODE(
         MIST_ADDRESS_output,
-
+        MIST_BECH32_HRP,
         ed25519_public_output,
         crypto_sign_ed25519_PUBLICKEYBYTES
     );

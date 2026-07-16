@@ -1,24 +1,48 @@
 #include "wrapper.h"
 
 #include <assert.h>
+#include <stdbool.h>
 #include <string.h>
 
-#include "bech32.h"
+#include <iostream> //DEBUG
+
 #include "../constants.h"
 #include "../result.h"
+#include "bech32.h"
+#include "convert_bits.h"
 
 result MIST_BECH32M_ENCODE(
-    char** output,
+    char** output, //Don't forget to free().
 
+    const char* hrp,
     const unsigned char* MIST_DECODED,
     const size_t decoded_size
 ) {
     std::vector<uint8_t> data(MIST_DECODED, MIST_DECODED + decoded_size); //Converting array to vector
 
-    std::string encoded_cpp = bech32::Encode(bech32::Encoding::BECH32M, bech32m_hrp, data);
+    size_t converted_decoded_size = (decoded_size * 8 + 4) / 5;
+    uint8_t converted_array[converted_decoded_size];
+    size_t converted_size = 0;
+    if (!convert_bits(
+        converted_array,
+        &converted_size,
+        5,
+        data.data(),
+        data.size(),
+        8,
+        1
+    ))
+        return bech32m_encoding_error;
+
+    std::vector<uint8_t> converted(converted_array, converted_array + converted_size);
+
+    std::string encoded_cpp = bech32::Encode(bech32::Encoding::BECH32M, hrp, converted);
     const char* encoded = encoded_cpp.c_str();
 
     *output = (char*) malloc(strlen(encoded) + 1);
+    if (*output == NULL)
+        return out_of_memory;
+
     strcpy(*output, encoded);
 
     return success;

@@ -12,6 +12,7 @@ extern "C" {
 result MIST_BECH32M_ENCODE(
     char** output,
 
+    const char* hrp,
     const unsigned char* MIST_DECODED,
     const size_t decoded_size
 );

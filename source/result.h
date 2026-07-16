@@ -13,6 +13,7 @@ typedef enum {
 
     invalid_wordlist,
 
+    bech32m_encoding_error,
     bech32m_decoding_error,
     bech32m_invalid
 } result;

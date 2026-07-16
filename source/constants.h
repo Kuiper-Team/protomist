@@ -8,6 +8,8 @@
 #define MIST_SEED_MNEMONIC_BITS_PER_WORD 11
 #define MIST_SEED_MNEMONIC_SPACE " "
 #define MIST_SEED_ITERATIONS 2048
+#define MIST_BECH32_HRP "mist"
+#define MIST_BECH32_HRP_SECRET "mistsecret"
 
 #define seed_generation_hlen 64 //HMAC-SHA512
 #define seed_generation_dklen_hlen_ratio (MIST_SEED_SIZE / seed_generation_hlen)
@@ -18,8 +20,5 @@
 #define bip39_wordlist_size 2048
 
 #define bech32m_encoding "bech32m"
-#define bech32m_hrp "mist1"
-
-#define ed25519_pk_size 
 
 #endif
