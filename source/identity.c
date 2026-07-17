@@ -234,7 +234,7 @@ result MIST_RESTORE_IDENTITY(
 
     MIST_BECH32M_ENCODE(
         MIST_ADDRESS_output,
-        MIST_BECH32_HRP,
+        MIST_BECH32M_HRP,
         ed25519_public_output,
         crypto_sign_ed25519_PUBLICKEYBYTES
     );

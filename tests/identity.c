@@ -55,10 +55,10 @@ int main() {
     char* curve25519_pk_bech32;
     char* curve25519_sk_bech32;
 
-    MIST_BECH32M_ENCODE(&ed25519_pk_bech32, MIST_BECH32_HRP, ed25519_pk, sizeof(ed25519_pk));
-    MIST_BECH32M_ENCODE(&ed25519_sk_bech32, MIST_BECH32_HRP_SECRET, ed25519_sk, sizeof(ed25519_sk));
-    MIST_BECH32M_ENCODE(&curve25519_pk_bech32, MIST_BECH32_HRP, curve25519_pk, sizeof(curve25519_pk));
-    MIST_BECH32M_ENCODE(&curve25519_sk_bech32, MIST_BECH32_HRP_SECRET, curve25519_sk, sizeof(curve25519_sk));
+    MIST_BECH32M_ENCODE(&ed25519_pk_bech32, MIST_BECH32M_HRP, ed25519_pk, sizeof(ed25519_pk));
+    MIST_BECH32M_ENCODE(&ed25519_sk_bech32, MIST_BECH32M_HRP_SECRET, ed25519_sk, sizeof(ed25519_sk));
+    MIST_BECH32M_ENCODE(&curve25519_pk_bech32, MIST_BECH32M_HRP, curve25519_pk, sizeof(curve25519_pk));
+    MIST_BECH32M_ENCODE(&curve25519_sk_bech32, MIST_BECH32M_HRP_SECRET, curve25519_sk, sizeof(curve25519_sk));
 
     printf("Address: %s\n", address);
     printf("Ed25519 Public Key: %s\n", ed25519_pk_bech32);

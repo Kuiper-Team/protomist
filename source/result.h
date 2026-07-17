@@ -15,7 +15,9 @@ typedef enum {
 
     bech32m_encoding_error,
     bech32m_decoding_error,
-    bech32m_invalid
+    bech32m_invalid,
+
+    incorrect_signature
 } result;
 
 #endif
