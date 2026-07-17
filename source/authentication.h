@@ -9,7 +9,7 @@
 result MIST_GENERATE_AUTHENTICATION_SUBKEY(
     unsigned char* output,
 
-    const unsigned char* PARENT_KEY
+    const unsigned char* MIST_PARENT_KEY
 );
 
 result MIST_SIGN(

@@ -12,7 +12,7 @@
 result MIST_GENERATE_AUTHENTICATION_SUBKEY(
     unsigned char* output,
 
-    const unsigned char* PARENT_KEY
+    const unsigned char* MIST_PARENT_KEY
 ) { //WIP. A generic MIST_GENERATE_SUBKEY() will be added to identity.h.
     return success;
 }
