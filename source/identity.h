@@ -1,6 +1,7 @@
 #ifndef identities_h
 #define identities_h
 
+#include "constants.h"
 #include "result.h"
 #include "wordlists/apply.h"
 
@@ -57,9 +58,11 @@ result MIST_RESTORE_IDENTITY(
 );
 
 result MIST_GENERATE_SUBKEY(
-    unsigned char* output,
+    unsigned char* output_public,
+    unsigned char* output_secret,
 
-    const unsigned char* MIST_PARENT_KEY,
-    const char* MIST_CONTEXT
+    const unsigned char* MIST_SEED,
+    const char* MIST_CONTEXT,
+    const subkey_type MIST_SUBKEY_TYPE
 );
 #endif

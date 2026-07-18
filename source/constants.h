@@ -22,4 +22,9 @@
 
 #define bech32m_encoding "bech32m"
 
+typedef enum {
+    ed25519,
+    curve25519
+} subkey_type;
+
 #endif

@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "bech32/wrapper.h"
+#include "blake3/blake3.h"
 #include "constants.h"
 #include "result.h"
 #include "wordlists/apply.h"
@@ -238,10 +239,40 @@ result MIST_RESTORE_IDENTITY(
 }
 
 result MIST_GENERATE_SUBKEY(
-    unsigned char* output,
+    unsigned char* output_public,
+    unsigned char* output_secret,
 
-    const unsigned char* MIST_PARENT_KEY,
-    const char* MIST_CONTEXT
-) { //WIP. HKDF + BLAKE3 -> KEY PAIR GENERATION
+    const unsigned char* MIST_SEED, //MIST_SEED_SIZE
+    const char* MIST_CONTEXT,
+    const subkey_type MIST_SUBKEY_TYPE
+) {
+    unsigned char derived[BLAKE3_OUT_LEN];
+
+    blake3_hasher hasher;
+    blake3_hasher_init_derive_key(&hasher, MIST_CONTEXT);
+
+    blake3_hasher_update(&hasher, MIST_SEED, MIST_SEED_SIZE);
+    blake3_hasher_finalize(&hasher, derived, sizeof(derived));
+
+    if (MIST_SUBKEY_TYPE == ed25519) {
+        crypto_sign_seed_keypair(
+            output_public,
+            output_secret,
+            derived
+        );
+
+        return success;
+    } else if (MIST_SUBKEY_TYPE == curve25519) {
+        crypto_box_seed_keypair(
+            output_public,
+            output_secret,
+            derived
+        );
+
+        return success;
+    } else {
+        return invalid_subkey_type;
+    }
+
     return success;
 }

@@ -17,7 +17,9 @@ typedef enum {
     bech32m_decoding_error,
     bech32m_invalid,
 
-    incorrect_signature
+    incorrect_signature,
+
+    invalid_subkey_type
 } result;
 
 #endif
