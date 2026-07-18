@@ -222,15 +222,10 @@ result MIST_RESTORE_IDENTITY(
     char** MIST_ADDRESS_output, //Don't forget to free(). crypto_sign_ed25519_PUBLICKEYBYTES
     unsigned char* ed25519_public_output, //crypto_sign_ed25519_PUBLICKEYBYTES
     unsigned char* ed25519_secret_output, //crypto_sign_ed25519_SECRETKEYBYTES
-    unsigned char* curve25519_public_output, //crypto_scalarmult_curve25519_BYTES
-    unsigned char* curve25519_secret_output, //crypto_scalarmult_curve25519_BYTES
 
     const unsigned char* MIST_SEED
 ) {
     crypto_sign_seed_keypair(ed25519_public_output, ed25519_secret_output, MIST_SEED);
-
-    crypto_sign_ed25519_pk_to_curve25519(curve25519_public_output, ed25519_public_output);
-    crypto_sign_ed25519_sk_to_curve25519(curve25519_secret_output, ed25519_secret_output);
 
     MIST_BECH32M_ENCODE(
         MIST_ADDRESS_output,
@@ -239,5 +234,14 @@ result MIST_RESTORE_IDENTITY(
         crypto_sign_ed25519_PUBLICKEYBYTES
     );
 
+    return success;
+}
+
+result MIST_GENERATE_SUBKEY(
+    unsigned char* output,
+
+    const unsigned char* MIST_PARENT_KEY,
+    const char* MIST_CONTEXT
+) { //WIP. HKDF + BLAKE3 -> KEY PAIR GENERATION
     return success;
 }

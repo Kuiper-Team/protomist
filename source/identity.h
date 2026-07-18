@@ -52,10 +52,14 @@ result MIST_RESTORE_IDENTITY(
     char** MIST_ADDRESS_output,
     unsigned char* ed25519_public_output,
     unsigned char* ed25519_secret_output,
-    unsigned char* curve25519_public_output,
-    unsigned char* curve25519_secret_output,
 
     const unsigned char* MIST_SEED
 );
 
+result MIST_GENERATE_SUBKEY(
+    unsigned char* output,
+
+    const unsigned char* MIST_PARENT_KEY,
+    const char* MIST_CONTEXT
+);
 #endif
