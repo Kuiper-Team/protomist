@@ -23,7 +23,7 @@ int main() {
 
     char* recovery_phrase;
     size_t recovery_phrase_length;
-    MIST_MNEMONIC_SENTENCE_JOIN(&recovery_phrase, recovery_phrase_length, mnemonic_sentence);
+    MIST_JOIN_MNEMONIC_SENTENCE(&recovery_phrase, recovery_phrase_length, mnemonic_sentence);
 
     printf("Recovery Phrase: %s\n", recovery_phrase);
     free(recovery_phrase);
@@ -46,17 +46,13 @@ int main() {
         seed
     );
 
-    char* ed25519_pk_bech32;
     char* ed25519_sk_bech32;
 
-    MIST_BECH32M_ENCODE(&ed25519_pk_bech32, MIST_BECH32M_HRP, ed25519_pk, sizeof(ed25519_pk));
     MIST_BECH32M_ENCODE(&ed25519_sk_bech32, MIST_BECH32M_HRP_SECRET, ed25519_sk, sizeof(ed25519_sk));
 
     printf("Address: %s\n", address);
-    printf("Ed25519 Public Key: %s\n", ed25519_pk_bech32);
     printf("Ed25519 Secret Key: %s\n", ed25519_sk_bech32);
 
     free(address);
-    free(ed25519_pk_bech32);
     free(ed25519_sk_bech32);
 }

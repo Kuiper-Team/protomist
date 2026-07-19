@@ -14,7 +14,7 @@
 result MIST_GENERATE_MNEMONIC_SENTENCE(
     char** output,
 
-    const char** list_pointer
+    const char* const* list_pointer
 ) {
     unsigned char bip39_entropy[MIST_SEED_ENTROPY_SIZE];
     randombytes_buf(bip39_entropy, sizeof(bip39_entropy));
@@ -29,7 +29,7 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         sizeof(checksum_input)
     );
 
-    //I might as well make a concatenate_bytes() helper. Usage here would be concatenate_bytes(&mnemonic_input, bip39_entropy, checksum).
+    //Concatenate Bytes
     unsigned char mnemonic_input[sizeof(bip39_entropy) + sizeof(checksum)];
     memcpy(mnemonic_input, bip39_entropy, sizeof(bip39_entropy));
     memcpy(mnemonic_input + sizeof(bip39_entropy) /* Pointer arithmetic */, checksum, sizeof(checksum));
@@ -47,11 +47,11 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
     return success;
 }
 
-result MIST_MNEMONIC_SENTENCE_JOIN(
+result MIST_JOIN_MNEMONIC_SENTENCE(
     char** output, //Don't forget to free().
     size_t output_length,
 
-    const char* const* MIST_MNEMONIC_SENTENCE
+    char** MIST_MNEMONIC_SENTENCE
 ) {
     output_length = 0;
 
@@ -92,13 +92,13 @@ result MIST_GENERATE_SEED(
     unsigned char* output,
     const size_t output_size,
 
-    const char* const* MIST_SEED_MNEMONIC_SENTENCE
+    char** MIST_SEED_MNEMONIC_SENTENCE
 ) {
     assert(output_size == MIST_SEED_SIZE);
 
     char* mnemonic_sentence;
     size_t mnemonic_sentence_length;
-    MIST_MNEMONIC_SENTENCE_JOIN(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
+    MIST_JOIN_MNEMONIC_SENTENCE(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
     if(crypto_pwhash(
         output,

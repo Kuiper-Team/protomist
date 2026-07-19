@@ -15,7 +15,7 @@ result apply_wordlist(
     char*** output,
 
     const unsigned char* MIST_ENTROPY,
-    const char** list_pointer
+    const char* const* list_pointer
 );
 
 #endif

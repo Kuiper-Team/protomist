@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //Attribution: https://github.com/BlockchainCommons/bc-bech32
 //Copyright (c) 2017 Pieter Wuille
 int convert_bits(
@@ -15,5 +19,9 @@ int convert_bits(
     int inbits,
     int pad
 );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

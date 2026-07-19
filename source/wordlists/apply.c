@@ -32,7 +32,7 @@ result apply_wordlist( //Example: {"abandon", ...}
     char*** output, //Don't forget to free() this. The size should be MIST_SEED_MNEMONIC_WORDS.
 
     const unsigned char* MIST_ENTROPY, //An array consisting of individual bytes
-    const char** list_pointer //A const char* array from wordlist/languages.h, such as en_list.
+    const char* const* list_pointer //A const char* array from wordlist/languages.h, such as en_list.
 ) {
     size_t bit = 0;
     size_t word_indices[MIST_SEED_MNEMONIC_WORDS];

@@ -10,21 +10,21 @@
 result MIST_GENERATE_MNEMONIC_SENTENCE(
     char** output,
 
-    const char** list_pointer 
+    const char* const* list_pointer 
 );
 
-result MIST_MNEMONIC_SENTENCE_JOIN(
+result MIST_JOIN_MNEMONIC_SENTENCE(
     char** output,
     size_t output_length,
 
-    const char* const* MIST_MNEMONIC_SENTENCE
+    char** MIST_MNEMONIC_SENTENCE
 );
 
 result MIST_GENERATE_SEED(
     unsigned char* output,
     const size_t output_size,
 
-    const char* const* MIST_SEED_MNEMONIC_SENTENCE
+    char** MIST_SEED_MNEMONIC_SENTENCE
 );
 
 result MIST_ENCRYPT_SEED(

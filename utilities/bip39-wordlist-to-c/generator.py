@@ -22,7 +22,7 @@ c_generated = ""
 h_generated = ""
 
 for filename in wordlists_directory.glob("*.txt"):
-    c_generated += f"\nconst char* { filename.stem }_list[bip39_wordlist_size] {{\n"
+    c_generated += f"\nconst char* { filename.stem }_list[bip39_wordlist_size] = {{\n"
 
     dummy = ""
     with open(filename, "r") as wordlist_file:

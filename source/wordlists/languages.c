@@ -2,7 +2,7 @@
 
 #include "../constants.h"
 
-const char* english_list[bip39_wordlist_size] {
+const char* english_list[bip39_wordlist_size] = {
     "abandon",
     "ability",
     "able",
@@ -2053,7 +2053,7 @@ const char* english_list[bip39_wordlist_size] {
     "zoo"
 };
 
-const char* czech_list[bip39_wordlist_size] {
+const char* czech_list[bip39_wordlist_size] = {
     "abdikace",
     "abeceda",
     "adresa",
@@ -4104,7 +4104,7 @@ const char* czech_list[bip39_wordlist_size] {
     "zvyk"
 };
 
-const char* chinese_traditional_list[bip39_wordlist_size] {
+const char* chinese_traditional_list[bip39_wordlist_size] = {
     "的",
     "一",
     "是",
@@ -6155,7 +6155,7 @@ const char* chinese_traditional_list[bip39_wordlist_size] {
     "歇"
 };
 
-const char* turkish_list[bip39_wordlist_size] {
+const char* turkish_list[bip39_wordlist_size] = {
     "abajur",
     "abaküs",
     "abartı",
@@ -8206,7 +8206,7 @@ const char* turkish_list[bip39_wordlist_size] {
     "zümre"
 };
 
-const char* korean_list[bip39_wordlist_size] {
+const char* korean_list[bip39_wordlist_size] = {
     "가격",
     "가끔",
     "가난",
@@ -10257,7 +10257,7 @@ const char* korean_list[bip39_wordlist_size] {
     "힘껏"
 };
 
-const char* french_list[bip39_wordlist_size] {
+const char* french_list[bip39_wordlist_size] = {
     "abaisser",
     "abandon",
     "abdiquer",
@@ -12308,7 +12308,7 @@ const char* french_list[bip39_wordlist_size] {
     "zoologie"
 };
 
-const char* chinese_simplified_list[bip39_wordlist_size] {
+const char* chinese_simplified_list[bip39_wordlist_size] = {
     "的",
     "一",
     "是",
@@ -14359,7 +14359,7 @@ const char* chinese_simplified_list[bip39_wordlist_size] {
     "歇"
 };
 
-const char* japanese_list[bip39_wordlist_size] {
+const char* japanese_list[bip39_wordlist_size] = {
     "あいこくしん",
     "あいさつ",
     "あいだ",
@@ -16410,7 +16410,7 @@ const char* japanese_list[bip39_wordlist_size] {
     "われる"
 };
 
-const char* russian_list[bip39_wordlist_size] {
+const char* russian_list[bip39_wordlist_size] = {
     "абзац",
     "абонент",
     "абсурд",
@@ -18461,7 +18461,7 @@ const char* russian_list[bip39_wordlist_size] {
     "ящик"
 };
 
-const char* portuguese_list[bip39_wordlist_size] {
+const char* portuguese_list[bip39_wordlist_size] = {
     "abacate",
     "abaixo",
     "abalar",
@@ -20512,7 +20512,7 @@ const char* portuguese_list[bip39_wordlist_size] {
     "zumbido"
 };
 
-const char* italian_list[bip39_wordlist_size] {
+const char* italian_list[bip39_wordlist_size] = {
     "abaco",
     "abbaglio",
     "abbinato",
@@ -22563,7 +22563,7 @@ const char* italian_list[bip39_wordlist_size] {
     "zuppa"
 };
 
-const char* spanish_list[bip39_wordlist_size] {
+const char* spanish_list[bip39_wordlist_size] = {
     "ábaco",
     "abdomen",
     "abeja",
@@ -24613,3 +24613,4 @@ const char* spanish_list[bip39_wordlist_size] {
     "zumo",
     "zurdo"
 };
+
