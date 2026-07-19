@@ -20,13 +20,13 @@ COBJECTS := \
 	source/identity.o \
 	source/wordlists/apply.o \
 	source/wordlists/languages.o \
-	tests/identity.o
+	examples/identity.o
 
 CPPOBJECTS := \
 	source/bech32/bech32.o \
 	source/bech32/wrapper.o
 
-identity_test.o: $(COBJECTS) $(CPPOBJECTS)
+identity_creation.o: $(COBJECTS) $(CPPOBJECTS)
 	$(CPP) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
@@ -36,4 +36,4 @@ identity_test.o: $(COBJECTS) $(CPPOBJECTS)
 	$(CPP) $(CPPFLAGS) -c $< -o $@ -I $(CPPINCLUDEFLAGS) -Wall -Wextra
 
 clean:
-	rm -f $(COBJECTS) $(CPPOBJECTS) identity_test.o
+	rm -f $(COBJECTS) $(CPPOBJECTS) identity_creation.o

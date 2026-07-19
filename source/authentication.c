@@ -8,15 +8,6 @@
 #include "constants.h"
 #include "result.h"
 
-//https://libsodium.gitbook.io/doc/key_derivation
-result MIST_GENERATE_AUTHENTICATION_SUBKEY(
-    unsigned char* output,
-
-    const unsigned char* MIST_PARENT_KEY
-) { //WIP. A generic MIST_GENERATE_SUBKEY() will be added to identity.h.
-    return success;
-}
-
 result MIST_SIGN(
     char* output, //Bech32
 

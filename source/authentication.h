@@ -6,12 +6,6 @@
 
 #include "result.h"
 
-result MIST_GENERATE_AUTHENTICATION_SUBKEY(
-    unsigned char* output,
-
-    const unsigned char* MIST_PARENT_KEY
-);
-
 result MIST_SIGN(
     char* output,
 
