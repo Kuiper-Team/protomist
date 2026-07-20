@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <iostream> //DEBUG
-
 #include "../constants.h"
 #include "../result.h"
 #include "bech32.h"
@@ -16,11 +14,11 @@ result MIST_BECH32M_ENCODE(
 
     const char* hrp,
     const unsigned char* MIST_DECODED,
-    const size_t decoded_size
+    const size_t decoded_length
 ) {
-    std::vector<uint8_t> data(MIST_DECODED, MIST_DECODED + decoded_size); //Converting array to vector
+    std::vector<uint8_t> data(MIST_DECODED, MIST_DECODED + decoded_length); //Converting array to vector
 
-    size_t converted_decoded_size = (decoded_size * 8 + 4) / 5;
+    size_t converted_decoded_size = (decoded_length * 8 + 4) / 5;
     uint8_t converted_array[converted_decoded_size];
     size_t converted_size = 0;
     if (!convert_bits(
@@ -53,25 +51,36 @@ result MIST_BECH32M_DECODE(
 
     const char* MIST_ENCODED
 ) {
-    size_t encoded_size = strlen(MIST_ENCODED) + 1;
-    std::string encoded(MIST_ENCODED, encoded_size);
+    std::string encoded(MIST_ENCODED);
 
-    struct bech32::DecodeResult decoded = bech32::Decode(encoded, bech32::CharLimit::BECH32);
-    if (decoded.encoding == bech32::Encoding::INVALID)
-        return bech32m_decoding_error;
-
+    struct bech32::DecodeResult decoded = bech32::Decode(encoded, bech32::CharLimit::UNLIMITED);
     std::vector<uint8_t> data = decoded.data;
-    uint8_t* output_uint8_t;
 
-    assert(!data.empty());
+    size_t output_size = (data.size() * 5 + 7) / 8 + 1;
+    size_t output_length = 0;
+    *output = (unsigned char*) malloc(output_size * sizeof(uint8_t));
+    if (*output == NULL)
+        return out_of_memory;
 
-    const uint8_t* data_array = data.data();
-    memcpy(output_uint8_t, data_array, data.size());
+    if (!convert_bits(
+        *output,
+        &output_length,
+        8,
+        data.data(),
+        data.size(),
+        5,
+        0
+    )) {
+        free(*output);
 
-    size_t output_size = decoded.data.size();
+        return bech32m_decoding_error;
+    }
 
-    for (size_t index = 0; index < output_size; index++)
-        (*output)[index] = (unsigned char) output_uint8_t[index];
+    if (output_length >= output_size) {
+        free(*output);
+        return bech32m_decoding_error;
+    }
+    (*output)[output_length] = '\0';
 
     return success;
 }

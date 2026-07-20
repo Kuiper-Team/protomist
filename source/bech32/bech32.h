@@ -36,6 +36,7 @@ enum class Encoding {
  *  convert the CharLimit::VALUE to an int. In practice, this should never happen since this CharLimit applies to an address encoding
  *  and we would never encode an address with such a massive value */
 enum CharLimit : size_t {
+    UNLIMITED = SIZE_MAX, //This is a protomist extension.
     BECH32 = 90,            //!< BIP173/350 imposed character limit for Bech32(m) encoded addresses. This guarantees finding up to 4 errors.
 };
 

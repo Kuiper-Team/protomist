@@ -1,11 +1,14 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 #include <sodium.h>
 
 #include "../source/bech32/wrapper.h"
 #include "../source/constants.h"
+#include "../source/contacts.h"
 #include "../source/identity.h"
+#include "../source/result.h"
 #include "../source/wordlists/languages.h"
 
 int main() {
@@ -46,13 +49,56 @@ int main() {
         seed
     );
 
-    char* ed25519_sk_bech32;
+    unsigned char* address_to_pk;
+    result result1 = MIST_BECH32M_DECODE(&address_to_pk, address);
 
+    assert(result1 == success);
+    assert(
+        memcmp(
+            address_to_pk,
+            ed25519_pk,
+            crypto_sign_ed25519_PUBLICKEYBYTES
+        ) == 0
+    );
+
+    char* ed25519_sk_bech32;
     MIST_BECH32M_ENCODE(&ed25519_sk_bech32, MIST_BECH32M_HRP_SECRET, ed25519_sk, sizeof(ed25519_sk));
 
     printf("Address: %s\n", address);
     printf("Ed25519 Secret Key: %s\n", ed25519_sk_bech32);
 
-    free(address);
+    sodium_memzero(ed25519_sk_bech32, sizeof(ed25519_sk));
     free(ed25519_sk_bech32);
+
+    char* contact_block;
+    MIST_CREATE_CONTACT_BLOCK(
+        &contact_block,
+        address,
+        "Me",
+        "This is my profile."
+    );
+
+    printf("Contact Block:\n%s\n", contact_block);
+
+    char* address_test;
+    char* label_test;
+    char* memo_test;
+    result result2 = MIST_DECODE_CONTACT_BLOCK(
+        &address_test,
+        &label_test,
+        &memo_test,
+        contact_block
+    );
+
+    assert(result2 == success);
+    assert(strcmp(address_test, address) == 0);
+    assert(strcmp(label_test, "Me") == 0);
+    assert(strcmp(memo_test, "This is my profile.") == 0);
+
+    free(address_test);
+    free(label_test);
+    free(memo_test);
+
+    free(address);
+    free(contact_block);
 }

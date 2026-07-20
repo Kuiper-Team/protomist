@@ -100,12 +100,13 @@ result MIST_GENERATE_SEED(
     size_t mnemonic_sentence_length;
     MIST_JOIN_MNEMONIC_SENTENCE(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
 
+    const unsigned char salt[crypto_pwhash_SALTBYTES] = "mnemonic";
     if(crypto_pwhash(
         output,
         MIST_SEED_SIZE,
         (const char*) mnemonic_sentence,
         strlen(mnemonic_sentence),
-        (const unsigned char*) seed_generation_salt, //Defined at constants.h
+        (const unsigned char*) salt, //Defined at constants.h
         crypto_pwhash_OPSLIMIT_INTERACTIVE, //This will be replaced with the protocol standard.
         crypto_pwhash_MEMLIMIT_INTERACTIVE, //This will be replaced with the protocol standard.
         crypto_pwhash_ALG_ARGON2ID13

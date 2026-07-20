@@ -17,10 +17,11 @@ COBJECTS := \
 	source/blake3/blake3.o \
 	source/blake3/blake3_dispatch.o \
 	source/blake3/blake3_portable.o \
+	source/contacts.o \
 	source/identity.o \
 	source/wordlists/apply.o \
 	source/wordlists/languages.o \
-	examples/identity.o
+	examples/identity_creation.o
 
 CPPOBJECTS := \
 	source/bech32/bech32.o \
@@ -30,7 +31,7 @@ identity_creation.o: $(COBJECTS) $(CPPOBJECTS)
 	$(CPP) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
-	$(C) $(CFLAGS) -c $< -o $@
+	$(C) $(CFLAGS) -c $< -o $@ -Wall -Wextra
 
 %.o: %.cpp
 	$(CPP) $(CPPFLAGS) -c $< -o $@ -I $(CPPINCLUDEFLAGS) -Wall -Wextra
