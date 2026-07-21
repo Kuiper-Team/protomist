@@ -1,11 +1,48 @@
 #include "contacts.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "bech32/wrapper.h"
 #include "constants.h"
 #include "result.h"
+
+// Source - https://stackoverflow.com/a/18972477
+// Posted by rcs, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-07-21, License - CC BY-SA 4.0
+int strpos(
+    const char* haystack,
+    const char* needle,
+    const int occurence
+) {
+    const char* res = haystack;
+    for (int i = 1; i <= occurence; i++) {
+        res = strstr(res, needle);
+        if (!res)
+            return -1;
+        else if (i != occurence)
+            res++;
+    }
+
+    return res - haystack;
+}
+
+void copy_string_range(
+    char* output,
+
+    const char* source,
+    const size_t start, //Inclusive
+    const size_t end //Inclusive
+) {
+    size_t copied_index = 0;
+    for (size_t index = start; index <= end; index++) {
+        output[copied_index] = source[index];
+
+        copied_index++;
+    }
+    output[copied_index] = '\0';
+}
 
 result MIST_CREATE_CONTACT_BLOCK(
     char** output,
@@ -37,76 +74,58 @@ result MIST_CREATE_CONTACT_BLOCK(
     );
 }
 
-result MIST_DECODE_CONTACT_BLOCK(
+result MIST_DECODE_CONTACT_BLOCK( //Don't forget to free() all the outputs.
     char** MIST_ADDRESS_output,
     char** MIST_LABEL_output,
     char** MIST_MEMO_output,
 
     const char* MIST_CONTACT_BLOCK
 ) {
-    unsigned char* decoded;
-    result decoded_result = MIST_BECH32M_DECODE(
-        &decoded,
+    unsigned char* bytes;
+    result bytes_result = MIST_BECH32M_DECODE(
+        &bytes,
         MIST_CONTACT_BLOCK
     );
-    if (decoded_result != success)
-        return decoded_result;
+    if (bytes_result != success)
+        return bytes_result;
 
-    char* decoded_string = (char*) decoded;
-    
-    char* token = strtok(decoded_string, MIST_CONTACT_FIELD_SEPERATOR);
-    int field = 0;
-    while (token != NULL) {
-        size_t field_size = strlen(token) + 1;
+    char* decoded = (char*) bytes;
 
-        switch (field) {
-            case 0:
-                *MIST_ADDRESS_output = (char*) malloc(field_size * sizeof(char));
-                if (*MIST_ADDRESS_output == NULL) {
-                    free(decoded);
+    const int label_start_int = strpos(decoded, MIST_CONTACT_FIELD_SEPERATOR, 1);
+    const int memo_start_int = strpos(decoded, MIST_CONTACT_FIELD_SEPERATOR, 2);
+    if (label_start_int == -1 || memo_start_int == -1) {
+        free(bytes);
 
-                    return out_of_memory;
-                }
-
-                strcpy(*MIST_ADDRESS_output, token);
-
-                break;
-            case 1:
-                *MIST_LABEL_output = (char*) malloc(field_size * sizeof(char));
-                if (*MIST_LABEL_output == NULL) {
-                    free(decoded);
-
-                    return out_of_memory;
-                }
-
-                strcpy(*MIST_LABEL_output, token);
-
-                break;
-            case 2:
-                *MIST_MEMO_output = (char*) malloc(field_size * sizeof(char));
-                if (*MIST_MEMO_output == NULL) {
-                    free(decoded);
-
-                    return out_of_memory;
-                }
-
-                strcpy(*MIST_MEMO_output, token);
-
-                break;
-            default:
-                free(decoded);
-
-                return malformed_contact_block;
-        }
-
-        token = strtok(NULL, MIST_CONTACT_FIELD_SEPERATOR);
-
-        field++;
-    }
-    free(decoded);
-
-    if (field != 3)
         return malformed_contact_block;
+    }
 
+    const size_t label_start = (size_t) label_start_int;
+    const size_t memo_start = (size_t) memo_start_int;
+
+    const size_t decoded_size = strlen((char*) decoded) + 1;
+    const size_t address_size = label_start + 1;
+    const size_t label_size = memo_start - label_start;
+    const size_t memo_size = decoded_size - memo_start - 1;
+
+    *MIST_ADDRESS_output = (char*) malloc(address_size * sizeof(char));
+    *MIST_LABEL_output = (char*) malloc(label_size * sizeof(char));
+    *MIST_MEMO_output = (char*) malloc(memo_size * sizeof(char));
+    if (*MIST_ADDRESS_output == NULL || *MIST_LABEL_output == NULL || *MIST_MEMO_output == NULL) {
+        free(bytes);
+        free(*MIST_ADDRESS_output);
+        free(*MIST_LABEL_output);
+        free(*MIST_MEMO_output);
+
+        return out_of_memory;
+    }
+
+    strncpy(*MIST_ADDRESS_output, decoded, label_start);
+    (*MIST_ADDRESS_output)[address_size - 1] = '\0';
+
+    copy_string_range(*MIST_LABEL_output, decoded, label_start + 1, memo_start - 1);
+    copy_string_range(*MIST_MEMO_output, decoded, memo_start + 1, decoded_size - 2);
+
+    free(bytes);
+    
     return success;
 }

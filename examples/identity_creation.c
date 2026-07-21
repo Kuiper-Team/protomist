@@ -18,6 +18,8 @@ int main() {
         exit(1);
     }
 
+    printf("\n-- IDENTITY --\n");
+
     char* mnemonic_sentence[MIST_SEED_MNEMONIC_WORDS];
     MIST_GENERATE_MNEMONIC_SENTENCE(
         mnemonic_sentence,
@@ -70,15 +72,17 @@ int main() {
     sodium_memzero(ed25519_sk_bech32, sizeof(ed25519_sk));
     free(ed25519_sk_bech32);
 
+    printf("\n-- CONTACT --\n");
+
     char* contact_block;
+    const char* label = "Me";
+    const char* memo = "This is my profile.\nThis line proves that multiline memos are supported.\nEven more proof.";
     MIST_CREATE_CONTACT_BLOCK(
         &contact_block,
         address,
         "Me",
-        "This is my profile."
+        memo
     );
-
-    printf("Contact Block:\n%s\n", contact_block);
 
     char* address_test;
     char* label_test;
@@ -92,8 +96,12 @@ int main() {
 
     assert(result2 == success);
     assert(strcmp(address_test, address) == 0);
-    assert(strcmp(label_test, "Me") == 0);
-    assert(strcmp(memo_test, "This is my profile.") == 0);
+    assert(strcmp(label_test, label) == 0);
+    assert(strcmp(memo_test, memo) == 0);
+
+    printf("Label: %s\nMemo: %s\nBlock: %s\n", label_test, memo_test, contact_block);
+
+    //RELOCATE AFTER DEBUGGING
 
     free(address_test);
     free(label_test);
