@@ -101,12 +101,51 @@ int main() {
 
     printf("Label: %s\nMemo: %s\nBlock: %s\n", label_test, memo_test, contact_block);
 
-    //RELOCATE AFTER DEBUGGING
-
     free(address_test);
     free(label_test);
     free(memo_test);
 
     free(address);
     free(contact_block);
+
+    printf("\n-- SUBKEYS --\n");
+
+    unsigned char example1_sub_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
+    unsigned char example1_sub_sk[crypto_sign_ed25519_PUBLICKEYBYTES];
+    result example1_sub_result = MIST_GENERATE_SUBKEY(
+        example1_sub_pk,
+        example1_sub_sk,
+        seed,
+        "example1",
+        ed25519
+    );
+
+    unsigned char example2_sub_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
+    unsigned char example2_sub_sk[crypto_sign_ed25519_PUBLICKEYBYTES];
+    result example2_sub_result = MIST_GENERATE_SUBKEY(
+        example2_sub_pk,
+        example2_sub_sk,
+        seed,
+        "example2",
+        curve25519
+    );
+
+    assert(example1_sub_result == success && example2_sub_result == success);
+
+    char* example1_sub_pk_bech32m;
+    char* example1_sub_sk_bech32m;
+    char* example2_sub_pk_bech32m;
+    char* example2_sub_sk_bech32m;
+
+    MIST_BECH32M_ENCODE(&example1_sub_pk_bech32m, MIST_BECH32M_HRP, example1_sub_pk, sizeof(example1_sub_pk));
+    MIST_BECH32M_ENCODE(&example1_sub_sk_bech32m, MIST_BECH32M_HRP_SECRET, example1_sub_sk, sizeof(example1_sub_sk));
+    MIST_BECH32M_ENCODE(&example2_sub_pk_bech32m, MIST_BECH32M_HRP, example2_sub_pk, sizeof(example2_sub_pk));
+    MIST_BECH32M_ENCODE(&example2_sub_sk_bech32m, MIST_BECH32M_HRP_SECRET, example2_sub_sk, sizeof(example2_sub_sk));
+
+    assert(example1_sub_pk_bech32m != NULL);
+    assert(example1_sub_sk_bech32m != NULL);
+    assert(example2_sub_pk_bech32m != NULL);
+    assert(example2_sub_sk_bech32m != NULL);
+
+    printf("example1:\n%s\n%s\n\nexample2:\n%s\n%s\n", example1_sub_pk_bech32m, example1_sub_sk_bech32m, example2_sub_pk_bech32m, example2_sub_sk_bech32m);
 }

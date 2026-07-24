@@ -240,8 +240,8 @@ result MIST_RESTORE_IDENTITY(
 }
 
 result MIST_GENERATE_SUBKEY(
-    unsigned char* output_public,
-    unsigned char* output_secret,
+    unsigned char* output_public, //crypto_sign_ed25519_PUBLICKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
+    unsigned char* output_secret, //crypto_sign_ed25519_SECRETKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
 
     const unsigned char* MIST_SEED, //MIST_SEED_SIZE
     const char* MIST_CONTEXT,
