@@ -222,26 +222,28 @@ result MIST_DECRYPT_SEED(
 
 result MIST_RESTORE_IDENTITY(
     char** MIST_ADDRESS_output, //Don't forget to free(). crypto_sign_ed25519_PUBLICKEYBYTES
-    unsigned char* ed25519_public_output, //crypto_sign_ed25519_PUBLICKEYBYTES
-    unsigned char* ed25519_secret_output, //crypto_sign_ed25519_SECRETKEYBYTES
+    unsigned char* MIST_IDENTITY_PK_output, //crypto_sign_ed25519_PUBLICKEYBYTES
+    unsigned char* MIST_IDENTITY_SK_output, //crypto_sign_ed25519_SECRETKEYBYTES
 
     const unsigned char* MIST_SEED
 ) {
-    crypto_sign_seed_keypair(ed25519_public_output, ed25519_secret_output, MIST_SEED);
+    crypto_sign_seed_keypair(MIST_IDENTITY_PK_output, MIST_IDENTITY_SK_output, MIST_SEED);
 
-    MIST_BECH32M_ENCODE(
+    result encode_result = MIST_BECH32M_ENCODE(
         MIST_ADDRESS_output,
         MIST_BECH32M_HRP,
-        ed25519_public_output,
+        MIST_IDENTITY_PK_output,
         crypto_sign_ed25519_PUBLICKEYBYTES
     );
+    if (encode_result != success)
+        return encode_result;
 
     return success;
 }
 
 result MIST_GENERATE_SUBKEY(
-    unsigned char* output_public, //crypto_sign_ed25519_PUBLICKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
-    unsigned char* output_secret, //crypto_sign_ed25519_SECRETKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
+    unsigned char* MIST_SUB_PK_output, //crypto_sign_ed25519_PUBLICKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
+    unsigned char* MIST_SUB_SK_output, //crypto_sign_ed25519_SECRETKEYBYTES for Ed25519, crypto_scalarmult_curve25519_BYTES for Curve25519.
 
     const unsigned char* MIST_SEED, //MIST_SEED_SIZE
     const char* MIST_CONTEXT,
@@ -257,16 +259,16 @@ result MIST_GENERATE_SUBKEY(
 
     if (MIST_SUBKEY_TYPE == ed25519) {
         crypto_sign_seed_keypair(
-            output_public,
-            output_secret,
+            MIST_SUB_PK_output,
+            MIST_SUB_SK_output,
             derived
         );
 
         return success;
     } else if (MIST_SUBKEY_TYPE == curve25519) {
         crypto_box_seed_keypair(
-            output_public,
-            output_secret,
+            MIST_SUB_PK_output,
+            MIST_SUB_SK_output,
             derived
         );
 

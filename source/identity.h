@@ -51,15 +51,15 @@ result MIST_DECRYPT_SEED(
 
 result MIST_RESTORE_IDENTITY(
     char** MIST_ADDRESS_output,
-    unsigned char* ed25519_public_output,
-    unsigned char* ed25519_secret_output,
+    unsigned char* MIST_IDENTITY_PK_output,
+    unsigned char* MIST_IDENTITY_SK_output,
 
     const unsigned char* MIST_SEED
 );
 
 result MIST_GENERATE_SUBKEY(
-    unsigned char* output_public,
-    unsigned char* output_secret,
+    unsigned char* MIST_SUB_PK_output,
+    unsigned char* MIST_SUB_SK_output,
 
     const unsigned char* MIST_SEED,
     const char* MIST_CONTEXT,
