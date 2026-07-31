@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "bech32/wrapper.h"
-#include "blake3/blake3.h"
 #include "constants.h"
 #include "result.h"
 #include "wordlists/apply.h"
@@ -247,34 +246,46 @@ result MIST_GENERATE_SUBKEY(
 
     const unsigned char* MIST_SEED, //MIST_SEED_SIZE
     const char* MIST_CONTEXT,
-    const subkey_type MIST_SUBKEY_TYPE
+    const subkey_algorithm MIST_ALGORITHM //Defined at constants.h
 ) {
-    unsigned char derived[BLAKE3_OUT_LEN];
+    unsigned char prk[crypto_kdf_hkdf_sha512_KEYBYTES];
+    unsigned char derived[crypto_sign_SEEDBYTES];
 
-    blake3_hasher hasher;
-    blake3_hasher_init_derive_key(&hasher, MIST_CONTEXT);
+    crypto_kdf_hkdf_sha512_extract(
+        prk,
+        NULL,
+        sizeof(NULL),
+        MIST_SEED,
+        MIST_SEED_SIZE,
+    );
 
-    blake3_hasher_update(&hasher, MIST_SEED, MIST_SEED_SIZE);
-    blake3_hasher_finalize(&hasher, derived, sizeof(derived));
+    crypto_kdf_hkdf_sha512_expand(
+        derived,
+        sizeof(derived),
+        MIST_CONTEXT,
+        strlen(MIST_CONTEXT),
+        prk
+    );
 
-    if (MIST_SUBKEY_TYPE == ed25519) {
-        crypto_sign_seed_keypair(
-            MIST_SUB_PK_output,
-            MIST_SUB_SK_output,
-            derived
-        );
+    switch (MIST_ALGORITHM) {
+        case ed25519:
+            crypto_sign_seed_keypair(
+                MIST_SUB_PK_output,
+                MIST_SUB_SK_output,
+                derived
+            );
 
-        return success;
-    } else if (MIST_SUBKEY_TYPE == curve25519) {
-        crypto_box_seed_keypair(
-            MIST_SUB_PK_output,
-            MIST_SUB_SK_output,
-            derived
-        );
+            return success;
+        case x25519:
+            crypto_box_seed_keypair(
+                MIST_SUB_PK_output,
+                MIST_SUB_SK_output,
+                derived
+            );
 
-        return success;
-    } else {
-        return invalid_subkey_type;
+            return success;
+        default:
+            return invalid_subkey_type;
     }
 
     return success;

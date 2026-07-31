@@ -63,6 +63,6 @@ result MIST_GENERATE_SUBKEY(
 
     const unsigned char* MIST_SEED,
     const char* MIST_CONTEXT,
-    const subkey_type MIST_SUBKEY_TYPE
+    const subkey_algorithm MIST_ALGORITHM
 );
 #endif
