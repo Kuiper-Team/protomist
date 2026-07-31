@@ -1,11 +1,7 @@
 C := gcc
 CPP := g++
 
-CFLAGS := -std=c11 \
-	-DBLAKE3_NO_AVX2 \
-	-DBLAKE3_NO_AVX512 \
-	-DBLAKE3_NO_SSE2 \
-	-DBLAKE3_NO_SSE41
+CFLAGS := -std=c11
 CPPFLAGS := -std=c++17
 
 LDFLAGS := -lsodium
