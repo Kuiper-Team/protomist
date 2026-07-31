@@ -249,14 +249,14 @@ result MIST_GENERATE_SUBKEY(
     const subkey_algorithm MIST_ALGORITHM //Defined at constants.h
 ) {
     unsigned char prk[crypto_kdf_hkdf_sha512_KEYBYTES];
-    unsigned char derived[crypto_sign_SEEDBYTES];
+    unsigned char derived[MIST_SUBKEY_SEED_SIZE];
 
     crypto_kdf_hkdf_sha512_extract(
         prk,
         NULL,
-        sizeof(NULL),
+        0,
         MIST_SEED,
-        MIST_SEED_SIZE,
+        MIST_SEED_SIZE
     );
 
     crypto_kdf_hkdf_sha512_expand(

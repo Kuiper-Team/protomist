@@ -12,8 +12,6 @@
 #include "../source/wordlists/languages.h"
 
 int main() {
-    printf("%d", crypto_sign_SEEDBYTES); //DEBUG
-
     if (sodium_init() == -1) {
         fprintf(stderr, "ERROR: libsodium could not be initialized.");
 
@@ -129,7 +127,7 @@ int main() {
         example2_sub_sk,
         seed,
         "example2",
-        curve25519
+        x25519
     );
 
     assert(example1_sub_result == success && example2_sub_result == success);
