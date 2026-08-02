@@ -10,9 +10,6 @@ CPPINCLUDEFLAGS := source/bech32
 
 COBJECTS := \
 	source/bech32/convert_bits.o \
-	source/blake3/blake3.o \
-	source/blake3/blake3_dispatch.o \
-	source/blake3/blake3_portable.o \
 	source/contacts.o \
 	source/identity.o \
 	source/wordlists/apply.o \

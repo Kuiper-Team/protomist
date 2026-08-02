@@ -7,10 +7,6 @@
 #include "../result.h"
 #include "../types.h"
 
-uint8_t bip39_shift(
-    size_t bit
-);
-
 result apply_wordlist(
     char*** output,
 

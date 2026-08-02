@@ -22,7 +22,7 @@ This implementation is based mostly on https://github.com/ciband/bip39
 Copyright (c) 2018 Chris Johnson
 */
 
-uint8_t bip39_shift(
+static uint8_t bip39_shift(
     size_t bit
 ) {
     return 1 << (8 - (bit % 8) - 1);

@@ -11,7 +11,7 @@
 // Source - https://stackoverflow.com/a/18972477
 // Posted by rcs, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-07-21, License - CC BY-SA 4.0
-int strpos(
+static int strpos(
     const char* haystack,
     const char* needle,
     const int occurence
@@ -28,7 +28,7 @@ int strpos(
     return res - haystack;
 }
 
-void copy_string_range(
+static void copy_string_range(
     char* output,
 
     const char* source,
