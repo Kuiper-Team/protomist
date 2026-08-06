@@ -11,8 +11,9 @@ CPPINCLUDEFLAGS := source/bech32
 COBJECTS := \
 	source/bech32/convert_bits.o \
 	source/contacts.o \
+	source/helpers.o \
 	source/identity.o \
-	source/signal.o \
+	source/pqxdh.o \
 	source/wordlists/apply.o \
 	source/wordlists/languages.o \
 	examples/identity_creation.o

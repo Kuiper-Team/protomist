@@ -7,6 +7,7 @@
 
 #include "bech32/wrapper.h"
 #include "constants.h"
+#include "helpers.h"
 #include "result.h"
 #include "wordlists/apply.h"
 
@@ -28,10 +29,14 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         sizeof(checksum_input)
     );
 
-    //Concatenate Bytes
-    unsigned char mnemonic_input[sizeof(bip39_entropy) + sizeof(checksum)];
-    memcpy(mnemonic_input, bip39_entropy, sizeof(bip39_entropy));
-    memcpy(mnemonic_input + sizeof(bip39_entropy) /* Pointer arithmetic */, checksum, sizeof(checksum));
+    unsigned char* mnemonic_input;
+    concatenate_bytes(
+        &mnemonic_bytes,
+        bip39_entropy,
+        sizeof(bip39_entropy),
+        checksum,
+        sizeof(checksum)
+    );
 
     apply_wordlist(
         &output,
