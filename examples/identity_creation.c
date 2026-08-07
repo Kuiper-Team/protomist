@@ -99,7 +99,7 @@ int main() {
     assert(strcmp(label_test, label) == 0);
     assert(strcmp(memo_test, memo) == 0);
 
-    printf("Label: %s\nMemo: %s\nBlock: %s\n", label_test, memo_test, contact_block);
+    printf("Label: %s\nMemo:\n%s\nBlock: %s\n", label_test, memo_test, contact_block);
 
     free(address_test);
     free(label_test);
