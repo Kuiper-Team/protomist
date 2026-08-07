@@ -5,6 +5,7 @@ CFLAGS := -std=c11
 CPPFLAGS := -std=c++17
 
 LDFLAGS := -lsodium
+WARNINGFLAGS := -Wall -Wextra -Wno-unused-parameter
 
 CPPINCLUDEFLAGS := source/bech32
 
@@ -26,10 +27,10 @@ identity_creation.o: $(COBJECTS) $(CPPOBJECTS)
 	$(CPP) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
-	$(C) $(CFLAGS) -c $< -o $@ -Wall -Wextra
+	$(C) $(CFLAGS) -c $< -o $@ $(WARNINGFLAGS)
 
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) -c $< -o $@ -I $(CPPINCLUDEFLAGS) -Wall -Wextra
+	$(CPP) $(CPPFLAGS) -c $< -o $@ -I $(CPPINCLUDEFLAGS) $(WARNINGFLAGS)
 
 clean:
 	rm -f $(COBJECTS) $(CPPOBJECTS) identity_creation.o

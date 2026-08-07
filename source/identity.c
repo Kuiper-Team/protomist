@@ -31,7 +31,7 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
 
     unsigned char* mnemonic_input;
     concatenate_bytes(
-        &mnemonic_bytes,
+        &mnemonic_input,
         bip39_entropy,
         sizeof(bip39_entropy),
         checksum,
@@ -101,8 +101,10 @@ result MIST_GENERATE_SEED(
     assert(output_size == MIST_SEED_SIZE);
 
     char* mnemonic_sentence;
-    size_t mnemonic_sentence_length;
-    MIST_JOIN_MNEMONIC_SENTENCE(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
+    size_t mnemonic_sentence_length = 0;
+    result join_result = MIST_JOIN_MNEMONIC_SENTENCE(&mnemonic_sentence, mnemonic_sentence_length, MIST_SEED_MNEMONIC_SENTENCE);
+    if (join_result != success)
+        return join_result;
 
     const unsigned char salt[crypto_pwhash_SALTBYTES] = "mnemonic";
     if(crypto_pwhash(

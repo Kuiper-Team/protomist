@@ -6,17 +6,17 @@
 #include "constants.h"
 #include "result.h"
 
-struct {
+struct initiator_prekey_bundle {
     unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES];
     unsigned char MIST_EK_PK[crypto_box_PUBLICKEYBYTES];
-} initiator_prekey_bundle;
+};
 
-struct {
+struct initiator_prekey_secrets {
     unsigned char MIST_EK_SK[crypto_box_SECRETKEYBYTES];
-} initiator_prekey_secrets;
+};
 
-struct {
-    unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES]
+struct recipient_prekey_bundle {
+    unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES];
 
     unsigned char MIST_SPK_PK[crypto_box_PUBLICKEYBYTES];
     unsigned char MIST_PQSPK_PK[crypto_kem_mlkem768_PUBLICKEYBYTES];
@@ -24,11 +24,12 @@ struct {
 
     unsigned char MIST_SPK_SIGNATURE[crypto_sign_BYTES];
     unsigned char MIST_PQSPK_SIGNATURE[crypto_sign_BYTES];
-} recipient_prekey_bundle;
+};
 
-struct {
+struct recipient_prekey_secrets {
+    unsigned char MIST_SPK_SK[crypto_box_SECRETKEYBYTES];
     unsigned char MIST_PQSPK_SK[crypto_kem_mlkem768_SECRETKEYBYTES];
-} recipient_prekey_secrets;
+};
 
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* output,

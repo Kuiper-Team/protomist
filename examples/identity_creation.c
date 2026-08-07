@@ -27,7 +27,7 @@ int main() {
     );
 
     char* recovery_phrase;
-    size_t recovery_phrase_length;
+    size_t recovery_phrase_length = 0;
     MIST_JOIN_MNEMONIC_SENTENCE(&recovery_phrase, recovery_phrase_length, mnemonic_sentence);
 
     printf("Recovery Phrase: %s\n", recovery_phrase);

@@ -10,25 +10,23 @@
 #include "helpers.h"
 #include "identity.h"
 
-result MIST_GENERATE_INITIATOR_PREKEYS(
+result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* output,
     struct initiator_prekey_secrets* secrets_output,
 
     const unsigned char* MIST_INITIATOR_IK_PK
 ) {
-    strcpy(output->MIST_IK_PK, MIST_INITIATOR_IK_PK);
+    memcpy(output->MIST_IK_PK, MIST_INITIATOR_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
 
     crypto_box_keypair(
         output->MIST_EK_PK,
         secrets_output->MIST_EK_SK
     );
-    if (output->MIST_EK_PK == NULL || secrets_output->MIST_EK_SK == NULL)
-       return key_pair_generation_error; 
 
     return success;
 }
 
-result MIST_GENERATE_RECIPIENT_PREKEYS( //WIP
+result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     struct recipient_prekey_bundle* output,
     struct recipient_prekey_secrets* secrets_output,
 
@@ -36,16 +34,16 @@ result MIST_GENERATE_RECIPIENT_PREKEYS( //WIP
     const unsigned char* MIST_RECIPIENT_IK_SK,
     const size_t MIST_IDENTIFIER_NUMBER
 ) { //Don't forget to free() output->MIST_SPK_IDENTIFIER!
-    strcpy(output->MIST_IK_PK, MIST_INITIATOR_IK_PK);
+    memcpy(output->MIST_IK_PK, MIST_RECIPIENT_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
 
     const size_t identifier_number_digits = count_digits(MIST_IDENTIFIER_NUMBER); 
     const size_t identifier_size = strlen(MIST_SPK_IDENTIFIER_PREFIX) + identifier_number_digits + 1;
 
-    char identifier_number_string[identifier_number_digits + 1]
+    char identifier_number_string[identifier_number_digits + 1];
     snprintf(
         identifier_number_string,
-        sizeof(identifier),
-        "%d",
+        sizeof(identifier_number_string),
+        "%zu",
         MIST_IDENTIFIER_NUMBER
     );
 
@@ -58,9 +56,10 @@ result MIST_GENERATE_RECIPIENT_PREKEYS( //WIP
 
     MIST_GENERATE_SUBKEY(
         output->MIST_SPK_PK,
-        output->MIST_SPK_SK,
+        secrets_output->MIST_SPK_SK,
         MIST_RECIPIENT_IK_PK,
-        identifier
+        output->MIST_SPK_IDENTIFIER,
+        x25519
     );
 
     unsigned char MIST_Z_SPK[MIST_Z_SIZE];

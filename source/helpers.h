@@ -12,7 +12,7 @@ void concatenate_bytes(
     const unsigned char* source1,
     const size_t source1_size,
     const unsigned char* source2,
-    const size_t source1_size
+    const size_t source2_size
 );
 
 #endif
