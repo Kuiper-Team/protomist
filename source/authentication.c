@@ -46,7 +46,7 @@ result MIST_VERIFY_SIGNATURE(
     const char* MIST_ADDRESS, //Bech32
     const unsigned char* MIST_PAYLOAD,
     const size_t payload_size,
-    const char* MIST_ED25519_SIGNATURE //Bech32
+    const char* MIST_SIGNATURE //Bech32
 ) {
     unsigned char* ed25519_pk;
     MIST_BECH32M_DECODE(
@@ -57,15 +57,15 @@ result MIST_VERIFY_SIGNATURE(
     unsigned char* signature;
     MIST_BECH32M_DECODE(
         &signature,
-        MIST_ED25519_SIGNATURE
+        MIST_SIGNATURE
     );
 
     if (crypto_sign_open(
         MIST_PAYLOAD,
         &payload_size,
-        MIST_ED25519_SIGNATURE,
+        MIST_SIGNATURE,
         signature_size,
-        MIST_ED25519_PUBLIC_KEY
+        MIST_PUBLIC_KEY
     ) != 0)
         return incorrect_signature;
     else

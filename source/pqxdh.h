@@ -21,6 +21,7 @@ struct recipient_prekey_bundle {
     unsigned char MIST_SPK_PK[crypto_box_PUBLICKEYBYTES];
     unsigned char MIST_PQSPK_PK[crypto_kem_mlkem768_PUBLICKEYBYTES];
     char* MIST_SPK_IDENTIFIER;
+    char* MIST_PQSPK_IDENTIFIER;
 
     unsigned char MIST_SPK_SIGNATURE[crypto_sign_BYTES];
     unsigned char MIST_PQSPK_SIGNATURE[crypto_sign_BYTES];

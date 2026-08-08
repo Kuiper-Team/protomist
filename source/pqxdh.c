@@ -67,7 +67,8 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
-    //To-do: Signatures.
+    //XEdDSA signature creation here.
+    //EncodeEC() & EncodeKEM()
 
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     sodium_memzero(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
@@ -78,6 +79,13 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
     const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 ) { //WIP
+    const unsigned char* ik = MIST_PREKEY_BUNDLE->MIST_IK_PK;
+
+    const unsigned char* spk_signature = MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE;
+    const unsigned char* pqspk_signature = MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE;
+
+    //XEdDSA signature verification here.
+
     return success;
 }
 

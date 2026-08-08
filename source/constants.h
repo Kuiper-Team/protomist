@@ -16,6 +16,7 @@
 #define MIST_BECH32M_HRP_SECRET "mistsecret"
 #define MIST_BECH32M_HRP_SIGNATURE "mistsign"
 #define MIST_SPK_IDENTIFIER_PREFIX "spk_"
+#define MIST_PQSPK_IDENTIFIER_PREFIX "pqspk_"
 #define MIST_Z_SIZE 8 //64 bits
 
 #define MIST_CONTACT_FIELD_SEPERATOR "\n"

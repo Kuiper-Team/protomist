@@ -18,7 +18,7 @@ result MIST_VERIFY_SIGNATURE(
     const char* MIST_ADDRESS,
     const unsigned char* MIST_PAYLOAD,
     const size_t payload_size,
-    const char* MIST_ED25519_SIGNATURE
+    const char* MIST_SIGNATURE
 );
 
 #endif
