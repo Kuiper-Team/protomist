@@ -265,7 +265,6 @@ result MIST_GENERATE_SUBKEY(
         MIST_SEED,
         MIST_SEED_SIZE
     );
-
     crypto_kdf_hkdf_sha512_expand(
         derived,
         sizeof(derived),

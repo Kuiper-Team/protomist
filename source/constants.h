@@ -17,16 +17,13 @@
 #define MIST_BECH32M_HRP_SIGNATURE "mistsign"
 #define MIST_SPK_IDENTIFIER_PREFIX "spk_"
 #define MIST_PQSPK_IDENTIFIER_PREFIX "pqspk_"
+#define MIST_SK_IDENTIFIER_PREFIX "sk_"
 #define MIST_Z_SIZE 8 //64 bits
-
+#define MIST_SK_F_BYTE 0xFF
+#define MIST_SK_F {MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE, MIST_SK_F_BYTE}
+#define MIST_SK_F_SIZE 32
 #define MIST_CONTACT_FIELD_SEPERATOR "\n"
-
-#define seed_generation_hlen 64 //HMAC-SHA512
-#define seed_generation_dklen_hlen_ratio (MIST_SEED_SIZE / seed_generation_hlen)
-#define seed_generation_U1_concatenated_size (seed_generation_salt_size + 4) //32 bits = 4 bytes.
-#define seed_generation_Un_concatenated_size (seed_generation_salt_size + seed_generation_hlen)
 #define bip39_wordlist_size 2048
-
 #define bech32m_encoding "bech32m"
 
 typedef enum {

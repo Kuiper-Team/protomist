@@ -8,10 +8,13 @@
 
 struct initiator_prekey_bundle {
     unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES];
+
     unsigned char MIST_EK_PK[crypto_box_PUBLICKEYBYTES];
 };
 
 struct initiator_prekey_secrets {
+    unsigned char MIST_IK_SK[crypto_sign_ed25519_SECRETKEYBYTES];
+
     unsigned char MIST_EK_SK[crypto_box_SECRETKEYBYTES];
 };
 
@@ -28,6 +31,8 @@ struct recipient_prekey_bundle {
 };
 
 struct recipient_prekey_secrets {
+    unsigned char MIST_IK_SK[crypto_sign_ed25519_SECRETKEYBYTES];
+
     unsigned char MIST_SPK_SK[crypto_box_SECRETKEYBYTES];
     unsigned char MIST_PQSPK_SK[crypto_kem_mlkem768_SECRETKEYBYTES];
 };

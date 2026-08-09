@@ -21,7 +21,9 @@ typedef enum {
 
     invalid_subkey_type,
 
-    malformed_contact_block
+    malformed_contact_block,
+
+    shared_secret_generation_error
 } result;
 
 #endif
