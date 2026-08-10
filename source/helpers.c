@@ -4,9 +4,39 @@
 #include <stdlib.h>
 #include <string.h>
 
-void concatenate_bytes(
+#include "result.h"
+
+result build_concatenated_buffer( //To-do: Don't allocate dynamically.
     unsigned char** destination,
 
+    const unsigned char** blueprint,
+    const size_t* sizes,
+    const size_t count
+) {
+    size_t total_size = 0;
+    for (size_t index = 0; index < count; index++)
+        total_size += sizes[index];
+
+    *destination = (unsigned char*) malloc(total_size);
+    if (*destination == NULL)
+        return out_of_memory;
+
+    size_t jump = 0;
+    for (size_t index = 0; index < count; index++) {
+        const unsigned char* buffer = blueprint[index];
+        const size_t size = sizes[index];
+
+        memcpy(*destination + jump, buffer, size);
+        jump += sizes[index];
+    }
+
+    return success;
+}
+
+void concatenate_bytes( //To-do: Don't allocate dynamically and return a result.
+    unsigned char** destination,
+
+    const size_t position,
     const unsigned char* source1,
     const size_t source1_size,
     const unsigned char* source2,

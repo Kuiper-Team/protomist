@@ -10,6 +10,33 @@
 #include "helpers.h"
 #include "identity.h"
 
+static result generate_identifier(
+    char** output,
+
+    const char* prefix,
+    const size_t number
+) { //Don't forget to free() output!
+    const size_t number_digits = count_digits(number); 
+    const size_t size = strlen(prefix) + number_digits + 1;
+
+    char number_string[number_digits + 1];
+    snprintf(
+        number_string,
+        sizeof(number_string),
+        "%zu", //Format specifier to handle size_t
+        number
+    );
+
+    *output = (char*) malloc(size);
+    if (*output == NULL)
+        return out_of_memory;   
+
+    strcpy(*output, prefix);
+    strcat(*output, number_string);
+
+    return success;
+}
+
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* output,
     struct initiator_prekey_secrets* secrets_output,
@@ -41,20 +68,13 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     const size_t identifier_number_digits = count_digits(MIST_IDENTIFIER_NUMBER); 
     const size_t identifier_size = strlen(MIST_SPK_IDENTIFIER_PREFIX) + identifier_number_digits + 1;
 
-    char identifier_number_string[identifier_number_digits + 1];
-    snprintf(
-        identifier_number_string,
-        sizeof(identifier_number_string),
-        "%zu",
+    result identifier_result = generate_identifier(
+        &output->MIST_SPK_IDENTIFIER,
+        MIST_SPK_IDENTIFIER_PREFIX,
         MIST_IDENTIFIER_NUMBER
     );
-
-    output->MIST_SPK_IDENTIFIER = (char*) malloc(identifier_size);
-    if (output->MIST_SPK_IDENTIFIER == NULL)
-        return out_of_memory;
-
-    strcpy(output->MIST_SPK_IDENTIFIER, MIST_SPK_IDENTIFIER_PREFIX);
-    strcat(output->MIST_SPK_IDENTIFIER, identifier_number_string);
+    if (identifier_result != success)
+        return identifier_result;
 
     MIST_GENERATE_SUBKEY(
         output->MIST_SPK_PK,
@@ -68,6 +88,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     unsigned char MIST_Z_PQSPK[MIST_Z_SIZE];
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
+    //Important: Do we keep them as secrets, or wipe them?
 
     //XEdDSA signature creation here.
     //EncodeEC() & EncodeKEM()
@@ -100,7 +121,7 @@ result MIST_CALCULATE_SHARED_KEY( //Rename for clarity? //Combines (CT, SS) gene
     const struct initiator_prekey_secrets* MIST_INITIATOR_PREKEY_SECRETS,
     const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE,
     const size_t MIST_IDENTIFIER_NUMBER
-) {
+) { //Don't forget to free output->MIST_SPK_IDENTIFIER!
     unsigned char* shared_secret;
     if (crypto_kem_mlkem768_enc(
         MIST_CIPHERTEXT_output,
@@ -135,28 +156,27 @@ result MIST_CALCULATE_SHARED_KEY( //Rename for clarity? //Combines (CT, SS) gene
         MIST_INITIATOR_PREKEY_BUNDLE->MIST_SPK_PK
     );
 
-    const size_t identifier_number_digits = count_digits(MIST_IDENTIFIER_NUMBER); 
-    const size_t identifier_size = strlen(MIST_SK_IDENTIFIER_PREFIX) + identifier_number_digits + 1;
-
-    char identifier_number_string[identifier_number_digits + 1];
-    snprintf(
-        identifier_number_string,
-        sizeof(identifier_number_string),
-        "%zu",
+    result identifier_result = generate_identifier(
+        &output->MIST_SPK_IDENTIFIER,
+        MIST_SPK_IDENTIFIER_PREFIX,
         MIST_IDENTIFIER_NUMBER
     );
+    if (identifier_result != success)
+        return identifier_result;
 
-    char* identifier = (char*) malloc(identifier_size);
-    if (identifier == NULL)
-        return out_of_memory;
+    const unsigned char f[MIST_SK_F_SIZE] = MIST_SK_F;
 
-    strcpy(output->MIST_SPK_IDENTIFIER, MIST_SPK_IDENTIFIER_PREFIX);
-    strcat(output->MIST_SPK_IDENTIFIER, identifier_number_string);
+    const unsigned char* km_blueprint[MIST_KM_SECTIONS] = {dh1, dh2, dh3, shared_secret};
+    const size_t km_sizes[MIST_KM_SECTIONS] = {sizeof(dh1), sizeof(dh2), sizeof(dh3), sizeof(shared_secret)};
+    unsigned char* km;
+    build_concatenated_buffer(
+        &km,
+        km_blueprint,
+        km_sizes,
+        MIST_KM_SECTIONS
+    );
 
-    unsigned char f[MIST_SK_F_SIZE] = MIST_SK_F;
-    unsigned char km[crypto_kdf_hkdf_sha512_KEYBYTES]; //TO-DO: Concatenate dh1, dh2, dh3 and shared_secret. In order to do so, modify concatenate_bytes() to become a variadic, general-purpose helper.
-
-    unsigned char ikm[sizeof(f) + sizeof(km)];
+    unsigned char* ikm;
     concatenate_bytes(
         &ikm,
         f,
