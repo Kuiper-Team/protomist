@@ -38,49 +38,59 @@ static result generate_identifier(
 }
 
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
-    struct initiator_prekey_bundle* output,
-    struct initiator_prekey_secrets* secrets_output,
+    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
 
     const unsigned char* MIST_INITIATOR_IK_PK
 ) {
-    memcpy(output->MIST_IK_PK, MIST_INITIATOR_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
-    memcpy(secrets_output->MIST_IK_SK, MIST_INITIATOR_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, MIST_INITIATOR_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
+    memcpy(MIST_PREKEY_SECRETS_output->MIST_IK_SK, MIST_INITIATOR_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
 
     crypto_box_keypair(
-        output->MIST_EK_PK,
-        secrets_output->MIST_EK_SK
+        MIST_PREKEY_BUNDLE_output->MIST_EK_PK,
+        MIST_PREKEY_SECRETS_output->MIST_EK_SK
     );
 
     return success;
 }
 
 result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
-    struct recipient_prekey_bundle* output,
-    struct recipient_prekey_secrets* secrets_output,
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS_output,
 
     const unsigned char* MIST_RECIPIENT_IK_PK,
     const unsigned char* MIST_RECIPIENT_IK_SK,
     const size_t MIST_IDENTIFIER_NUMBER
 ) { //Don't forget to free() output->MIST_SPK_IDENTIFIER!
-    memcpy(output->MIST_IK_PK, MIST_RECIPIENT_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
-    memcpy(secrets_output->MIST_IK_SK, MIST_RECIPIENT_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, MIST_RECIPIENT_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
+    memcpy(MIST_PREKEY_SECRETS_output->MIST_IK_SK, MIST_RECIPIENT_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
 
     const size_t identifier_number_digits = count_digits(MIST_IDENTIFIER_NUMBER); 
     const size_t identifier_size = strlen(MIST_SPK_IDENTIFIER_PREFIX) + identifier_number_digits + 1;
 
-    result identifier_result = generate_identifier(
-        &output->MIST_SPK_IDENTIFIER,
+    result identifier_result;
+
+    identifier_result = generate_identifier(
+        &MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER,
         MIST_SPK_IDENTIFIER_PREFIX,
         MIST_IDENTIFIER_NUMBER
     );
     if (identifier_result != success)
         return identifier_result;
 
+    identifier_result = generate_identifier(
+        &MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER,
+        MIST_PQSPK_IDENTIFIER_PREFIX,
+        MIST_IDENTIFIER_NUMBER
+    );
+    if (identifier_result != success)
+        return identifier_result;
+
     MIST_GENERATE_SUBKEY(
-        output->MIST_SPK_PK,
-        secrets_output->MIST_SPK_SK,
+        MIST_PREKEY_BUNDLE_output->MIST_SPK_PK,
+        MIST_PREKEY_SECRETS_output->MIST_SPK_SK,
         MIST_RECIPIENT_IK_PK,
-        output->MIST_SPK_IDENTIFIER,
+        MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER,
         x25519
     );
 
@@ -88,11 +98,11 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     unsigned char MIST_Z_PQSPK[MIST_Z_SIZE];
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
-    //Important: Do we keep them as secrets, or wipe them?
 
     //XEdDSA signature creation here.
     //EncodeEC() & EncodeKEM()
 
+    //Important: Do we keep them as secrets, or wipe them?
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     sodium_memzero(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
@@ -113,7 +123,6 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
 }
 
 result MIST_CALCULATE_SHARED_KEY( //Rename for clarity? //Combines (CT, SS) generation and SK = KDF(...) //WIP
-    unsigned char* output,
     unsigned char* MIST_CIPHERTEXT_output, //crypto_kem_mlkem768_CIPHERTEXTBYTES
     unsigned char* MIST_SHARED_KEY_output, //MIST_SUBKEY_SEED_SIZE
 
@@ -156,13 +165,7 @@ result MIST_CALCULATE_SHARED_KEY( //Rename for clarity? //Combines (CT, SS) gene
         MIST_INITIATOR_PREKEY_BUNDLE->MIST_SPK_PK
     );
 
-    result identifier_result = generate_identifier(
-        &output->MIST_SPK_IDENTIFIER,
-        MIST_SPK_IDENTIFIER_PREFIX,
-        MIST_IDENTIFIER_NUMBER
-    );
-    if (identifier_result != success)
-        return identifier_result;
+
 
     const unsigned char f[MIST_SK_F_SIZE] = MIST_SK_F;
 
@@ -214,7 +217,7 @@ result MIST_CALCULATE_ASSOCIATED_DATA( //WIP
 result MIST_SERIALIZE_INITIAL_PAYLOAD( //WIP
     unsigned char* output,
 
-    const struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE
+    const struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
     const unsigned char* MIST_CIPHERTEXT
 ) {
     return success;

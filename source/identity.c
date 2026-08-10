@@ -29,9 +29,9 @@ result MIST_GENERATE_MNEMONIC_SENTENCE(
         sizeof(checksum_input)
     );
 
-    unsigned char* mnemonic_input;
+    unsigned char mnemonic_input[sizeof(bip39_entropy) + sizeof(checksum)];
     concatenate_bytes(
-        &mnemonic_input,
+        mnemonic_input,
         bip39_entropy,
         sizeof(bip39_entropy),
         checksum,

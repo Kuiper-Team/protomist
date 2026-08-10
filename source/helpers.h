@@ -7,12 +7,20 @@
 #define count_digits(number) (floor(log10(number)) + 1)
 
 void concatenate_bytes(
-    unsigned char** destination,
+    unsigned char* destination,
 
     const unsigned char* source1,
     const size_t source1_size,
     const unsigned char* source2,
     const size_t source2_size
+);
+
+result build_concatenated_buffer(
+    unsigned char* destination,
+
+    const unsigned char** blueprint,
+    const size_t* sizes,
+    const size_t count
 );
 
 #endif

@@ -23,6 +23,7 @@ struct recipient_prekey_bundle {
 
     unsigned char MIST_SPK_PK[crypto_box_PUBLICKEYBYTES];
     unsigned char MIST_PQSPK_PK[crypto_kem_mlkem768_PUBLICKEYBYTES];
+
     char* MIST_SPK_IDENTIFIER;
     char* MIST_PQSPK_IDENTIFIER;
 
@@ -38,15 +39,15 @@ struct recipient_prekey_secrets {
 };
 
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
-    struct initiator_prekey_bundle* output,
-    struct initiator_prekey_secrets* secrets_output,
+    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
 
     const unsigned char* MIST_INITIATOR_IK_PK
 );
 
 result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
-    struct recipient_prekey_bundle* output,
-    struct recipient_prekey_secrets* secrets_output,
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS_output,
 
     const unsigned char* MIST_RECIPIENT_IK_PK,
     const unsigned char* MIST_RECIPIENT_IK_SK,
@@ -58,14 +59,13 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
 );
 
 result MIST_CALCULATE_SHARED_KEY(
-    unsigned char* output,
     unsigned char* MIST_CIPHERTEXT_output,
+    unsigned char* MIST_SHARED_KEY_output,
 
-    const unsigned char* MIST_INITIATOR_IK,
-    const unsigned char* MIST_RECIPIENT_IK,
-    const unsigned char* MIST_RECIPIENT_SPK,
-    const unsigned char* MIST_RECIPIENT_EK,
-    const unsigned char* MIST_SHARED_SECRET
+    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
+    const struct initiator_prekey_secrets* MIST_INITIATOR_PREKEY_SECRETS,
+    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE,
+    const size_t MIST_IDENTIFIER_NUMBER
 );
 
 result MIST_CALCULATE_ASSOCIATED_DATA(
@@ -78,8 +78,7 @@ result MIST_CALCULATE_ASSOCIATED_DATA(
 result MIST_SERIALIZE_INITIAL_PAYLOAD(
     unsigned char* output,
 
-    const unsigned char* MIST_IK,
-    const unsigned char* MIST_EPK,
+    const struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
     const unsigned char* MIST_CIPHERTEXT
 );
 
