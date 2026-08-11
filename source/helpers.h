@@ -15,7 +15,7 @@ void concatenate_bytes(
     const size_t source2_size
 );
 
-result build_concatenated_buffer(
+void build_concatenated_buffer(
     unsigned char* destination,
 
     const unsigned char** blueprint,

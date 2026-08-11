@@ -19,7 +19,7 @@ void concatenate_bytes(
     memcpy(destination + source1_size, source2, source2_size); //Pointer arithmetic
 }
 
-result build_concatenated_buffer(
+void build_concatenated_buffer(
     unsigned char* destination,
 
     const unsigned char** blueprint,
@@ -34,6 +34,4 @@ result build_concatenated_buffer(
         memcpy(destination + jump, buffer, size);
         jump += sizes[index];
     }
-
-    return success;
 }

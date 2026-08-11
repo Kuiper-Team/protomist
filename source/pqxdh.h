@@ -71,8 +71,8 @@ result MIST_CALCULATE_SHARED_KEY(
 result MIST_CALCULATE_ASSOCIATED_DATA(
     unsigned char* output,
 
-    const unsigned char* MIST_INITIATOR_IK,
-    const unsigned char* MIST_RECIPIENT_IK
+    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
+    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE
 );
 
 result MIST_SERIALIZE_INITIAL_PAYLOAD(
