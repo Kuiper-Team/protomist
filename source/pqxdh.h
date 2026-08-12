@@ -58,7 +58,7 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
     const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 );
 
-result MIST_CALCULATE_SHARED_KEY(
+result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY(
     unsigned char* MIST_CIPHERTEXT_output,
     unsigned char* MIST_SHARED_KEY_output,
 

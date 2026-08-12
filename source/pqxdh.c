@@ -122,7 +122,7 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
     return success;
 }
 
-result MIST_CALCULATE_SHARED_KEY( //Rename for clarity? //Combines (CT, SS) generation and SK = KDF(...) //WIP
+result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY( //WIP
     unsigned char* MIST_CIPHERTEXT_output, //crypto_kem_mlkem768_CIPHERTEXTBYTES
     unsigned char* MIST_SHARED_KEY_output, //MIST_SUBKEY_SEED_SIZE
 
