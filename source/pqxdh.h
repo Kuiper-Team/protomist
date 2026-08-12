@@ -75,11 +75,4 @@ result MIST_CALCULATE_ASSOCIATED_DATA(
     const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE
 );
 
-result MIST_SERIALIZE_INITIAL_PAYLOAD(
-    unsigned char* output,
-
-    const struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
-    const unsigned char* MIST_CIPHERTEXT
-);
-
 #endif
