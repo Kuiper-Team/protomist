@@ -37,6 +37,39 @@ static result generate_identifier(
     return success;
 }
 
+result MIST_ROTATE_INITIATOR_EK(
+    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+) {
+    crypto_box_keypair(
+        MIST_PREKEY_BUNDLE->MIST_EK_PK,
+        MIST_PREKEY_SECRETS->MIST_EK_SK
+    );
+
+    return success;
+}
+
+result MIST_ROTATE_RECIPIENT_SPK(
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+) {
+    crypto_box_keypair(
+        MIST_PREKEY_BUNDLE->MIST_SPK_PK,
+        MIST_PREKEY_SECRETS->MIST_SPK_SK
+    );
+
+    return success;
+}
+
+result MIST_ROTATE_RECIPIENT_PQSPK(
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+) {
+    crypto_kem_mlkem768_keypair(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK, MIST_PREKEY_SECRETS->MIST_PQSPK_SK);
+
+    return success;
+}
+
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
     struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
@@ -46,10 +79,7 @@ result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, MIST_INITIATOR_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
     memcpy(MIST_PREKEY_SECRETS_output->MIST_IK_SK, MIST_INITIATOR_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
 
-    crypto_box_keypair(
-        MIST_PREKEY_BUNDLE_output->MIST_EK_PK,
-        MIST_PREKEY_SECRETS_output->MIST_EK_SK
-    );
+    MIST_ROTATE_INITIATOR_EK(MIST_PREKEY_BUNDLE_output->MIST_EK_PK, MIST_PREKEY_SECRETS_output->MIST_EK_SK);
 
     return success;
 }
@@ -78,6 +108,8 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     if (identifier_result != success)
         return identifier_result;
 
+    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK, MIST_PREKEY_SECRETS_output->MIST_SPK_SK);
+
     identifier_result = generate_identifier(
         &MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER,
         MIST_PQSPK_IDENTIFIER_PREFIX,
@@ -86,13 +118,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     if (identifier_result != success)
         return identifier_result;
 
-    MIST_GENERATE_SUBKEY(
-        MIST_PREKEY_BUNDLE_output->MIST_SPK_PK,
-        MIST_PREKEY_SECRETS_output->MIST_SPK_SK,
-        MIST_RECIPIENT_IK_PK,
-        MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER,
-        x25519
-    );
+    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK, MIST_PREKEY_SECRETS_output->MIST_PQSPK_SK);
 
     unsigned char MIST_Z_SPK[MIST_Z_SIZE];
     unsigned char MIST_Z_PQSPK[MIST_Z_SIZE];
@@ -100,7 +126,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
     //XEdDSA signature creation here.
-    //EncodeEC() & EncodeKEM()
+    //EncodeKEM()
 
     //Important: Do we keep them as secrets, or wipe them?
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));

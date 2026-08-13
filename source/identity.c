@@ -291,7 +291,7 @@ result MIST_GENERATE_SUBKEY(
 
             return success;
         default:
-            return invalid_subkey_type;
+            return invalid_subkey_algorithm;
     }
 
     return success;

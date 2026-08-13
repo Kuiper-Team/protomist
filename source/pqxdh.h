@@ -38,6 +38,21 @@ struct recipient_prekey_secrets {
     unsigned char MIST_PQSPK_SK[crypto_kem_mlkem768_SECRETKEYBYTES];
 };
 
+result MIST_ROTATE_INITIATOR_EK(
+    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+);
+
+result MIST_ROTATE_RECIPIENT_SPK(
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+);
+
+result MIST_ROTATE_RECIPIENT_PQSPK(
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+);
+
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
     struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
