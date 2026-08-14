@@ -1,5 +1,7 @@
 #include "additions.h"
 
+#include <sodium.h>
+
 #include "types.h"
 
 //fe_1
@@ -996,8 +998,88 @@ void sc_muladd(unsigned char *s,const unsigned char *a,const unsigned char *b,co
 }
 
 //crypto_sign_modified
+int crypto_sign_modified(
+    unsigned char* sm,
 
+    const unsigned char* m,
+    unsigned long long mlen,
+    const unsigned char* sk,
+    const unsigned char* pk,
+    const unsigned char* random,
+) {
+    unsigned char nonce[64];
+    unsigned char hram[64];
+    ge_p3 R;
+    int count = 0;
+
+    memmove(sm + 64, m, mlen);
+    memmove(sm + 32, sk, 32); /* NEW: Use privkey directly for nonce derivation */
+
+    /* NEW : add prefix to separate hash uses - see .h */
+    sm[0] = 0xFE;
+    for (count = 1; count < 32; count++)
+        sm[count] = 0xFF;
+
+    /* NEW: add suffix of random data */
+    memmove(sm + mlen + 64, random, 64);
+
+    crypto_hash_sha512(nonce, sm, mlen + 128);
+    memmove(sm + 32, pk, 32);
+
+    sc_reduce(nonce);
+
+    ge_scalarmult_base(&R, nonce);
+    ge_p3_tobytes(sm, &R);
+
+    crypto_hash_sha512(hram, sm, mlen + 64);
+    sc_reduce(hram);
+    sc_muladd(sm + 32, hram, sk, nonce); /* NEW: Use privkey directly */
+
+    /* Erase any traces of private scalar or
+       nonce left in the stack from sc_muladd */
+    unsigned char m[1024]
+    sodium_memzero(m, sizeof(m))
+
+    sodium_memzero(nonce, 64);
+
+    return 0;
+}
 
 //crypto_sign_open_modified
+int crypto_sign_open_modified(
+    unsigned char* m,
 
+    const unsigned char* sm,
+    unsigned long long smlen,
+    const unsigned char* pk
+) {
+    unsigned char pkcopy[32];
+    unsigned char rcopy[32];
+    unsigned char scopy[32];
+    unsigned char h[64];
+    unsigned char rcheck[32];
+    ge_p3 A;
+    ge_p2 R;
 
+    if (smlen < 64) goto badsig;
+    if (sm[63] & 224) goto badsig; /* strict parsing of s */
+    if (ge_frombytes_negate_vartime(&A, pk) != 0) goto badsig;
+
+    memmove(pkcopy, pk, 32);
+    memmove(rcopy, sm, 32);
+    memmove(scopy, sm + 32, 32);
+
+    memmove(m, sm, smlen);
+    memmove(m + 32, pkcopy, 32);
+    crypto_hash_sha512(h, m, smlen);
+    sc_reduce(h);
+
+    ge_double_scalarmult_vartime(&R, h, &A, scopy);
+    ge_tobytes(rcheck, &R);
+
+    if (crypto_verify_32(rcheck, rcopy) == 0)
+        return 0;
+
+badsig:
+    return -1;
+}

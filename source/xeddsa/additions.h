@@ -63,18 +63,21 @@ void elligator(fe u, const fe r);
 void hash_to_point(ge_p3* p, const unsigned char* msg, const unsigned long in_len);
 
 int crypto_sign_modified(
-    unsigned char *sm,
-    const unsigned char *m,unsigned long long mlen,
-    const unsigned char *sk, /* Curve/Ed25519 private key */
-    const unsigned char *pk, /* Ed25519 public key */
-    const unsigned char *random /* 64 bytes random to hash into nonce */
+    unsigned char* sm,
+
+    const unsigned char* m,
+    unsigned long long mlen,
+    const unsigned char* sk,
+    const unsigned char* pk,
+    const unsigned char* random,
 );
 
 int crypto_sign_open_modified(
-    unsigned char *m,
-    const unsigned char *sm,unsigned long long smlen,
-    const unsigned char *pk
-);
+    unsigned char* m,
 
+    const unsigned char* sm,
+    unsigned long long smlen,
+    const unsigned char* pk
+);
 
 #endif
