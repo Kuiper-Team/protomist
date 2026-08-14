@@ -45,12 +45,12 @@ result MIST_ROTATE_INITIATOR_EK(
 
 result MIST_ROTATE_RECIPIENT_SPK(
     struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
 );
 
 result MIST_ROTATE_RECIPIENT_PQSPK(
     struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
 );
 
 result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
@@ -70,7 +70,9 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
 );
 
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    const unsigned char* MIST_Z_SPK,
+    const unsigned char* MIST_Z_PQSPK
 );
 
 result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY(

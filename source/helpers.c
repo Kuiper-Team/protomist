@@ -9,7 +9,6 @@
 void concatenate_bytes(
     unsigned char* destination,
 
-    const size_t position,
     const unsigned char* source1,
     const size_t source1_size,
     const unsigned char* source2,

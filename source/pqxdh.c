@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "helpers.h"
 #include "identity.h"
+#include "xeddsa/xeddsa.h"
 
 static result generate_identifier(
     char** output,
@@ -76,10 +77,19 @@ result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
 
     const unsigned char* MIST_INITIATOR_IK_PK
 ) {
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, MIST_INITIATOR_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
-    memcpy(MIST_PREKEY_SECRETS_output->MIST_IK_SK, MIST_INITIATOR_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
+    //The sizes must be appropriate.
+    memcpy(
+        MIST_PREKEY_BUNDLE_output->MIST_IK_PK,
+        MIST_PREKEY_BUNDLE_output->MIST_INITIATOR_IK_PK,
+        crypto_sign_ed25519_PUBLICKEYBYTES
+    );
+    memcpy(
+        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
+        MIST_PREKEY_SECRETS_output->MIST_INITIATOR_IK_SK,
+        crypto_sign_ed25519_SECRETKEYBYTES
+    );
 
-    MIST_ROTATE_INITIATOR_EK(MIST_PREKEY_BUNDLE_output->MIST_EK_PK, MIST_PREKEY_SECRETS_output->MIST_EK_SK);
+    MIST_ROTATE_INITIATOR_EK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
 
     return success;
 }
@@ -92,11 +102,17 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     const unsigned char* MIST_RECIPIENT_IK_SK,
     const size_t MIST_IDENTIFIER_NUMBER
 ) { //Don't forget to free() output->MIST_SPK_IDENTIFIER!
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, MIST_RECIPIENT_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES); //The size must be appropriate.
-    memcpy(MIST_PREKEY_SECRETS_output->MIST_IK_SK, MIST_RECIPIENT_IK_SK, crypto_sign_ed25519_SECRETKEYBYTES); //The size must be appropriate.
-
-    const size_t identifier_number_digits = count_digits(MIST_IDENTIFIER_NUMBER); 
-    const size_t identifier_size = strlen(MIST_SPK_IDENTIFIER_PREFIX) + identifier_number_digits + 1;
+    //The sizes must be appropriate.
+    memcpy(
+        MIST_PREKEY_BUNDLE_output->MIST_IK_PK,
+        MIST_PREKEY_BUNDLE_output->MIST_RECIPIENT_IK_PK,
+        crypto_sign_ed25519_PUBLICKEYBYTES
+    );
+    memcpy(
+        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
+        MIST_PREKEY_SECRETS_output->MIST_RECIPIENT_IK_SK,
+        crypto_sign_ed25519_SECRETKEYBYTES
+    );
 
     result identifier_result;
 
@@ -108,7 +124,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     if (identifier_result != success)
         return identifier_result;
 
-    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK, MIST_PREKEY_SECRETS_output->MIST_SPK_SK);
+    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
 
     identifier_result = generate_identifier(
         &MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER,
@@ -118,7 +134,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     if (identifier_result != success)
         return identifier_result;
 
-    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK, MIST_PREKEY_SECRETS_output->MIST_PQSPK_SK);
+    MIST_ROTATE_RECIPIENT_PQSPK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
 
     unsigned char MIST_Z_SPK[MIST_Z_SIZE];
     unsigned char MIST_Z_PQSPK[MIST_Z_SIZE];
@@ -135,15 +151,30 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     return success;
 }
 
+//Where should Z values be stored?
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
+    const unsigned char* MIST_Z_SPK,
+    const unsigned char* MIST_Z_PQSPK
 ) {
-    const unsigned char* ik = MIST_PREKEY_BUNDLE->MIST_IK_PK;
+    const unsigned char* spk_identifier = MIST_PREKEY_BUNDLE->MIST_SPK_IDENTIFIER;
+    const unsigned char* pqspk_identifier = MIST_PREKEY_BUNDLE->MIST_PQSPK_IDENTIFIER;
 
-    const unsigned char* spk_signature = MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE;
-    const unsigned char* pqspk_signature = MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE;
+    if (xed25519_verify(
+        MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE,
+        MIST_PREKEY_BUNDLE->MIST_IK_PK,
+        spk_identifier,
+        strlen(spk_identifier) + 1
+    ) != 0)
+        return incorrect_signature;
 
-    //XEdDSA signature verification here.
+    if (xed25519_verify(
+        MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE,
+        MIST_PREKEY_BUNDLE->MIST_IK_PK,
+        pqspk_identifier, //To-do: Fix according to EncodeKEM().
+        strlen(pqspk_identifier) + 1
+    ) != 0)
+        return incorrect_signature;
 
     return success;
 }
