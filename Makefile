@@ -5,7 +5,7 @@ CFLAGS := -std=c11
 CPPFLAGS := -std=c++17
 
 LDFLAGS := -lsodium
-WARNINGFLAGS := -Wall -Wextra -Wno-unused-parameter
+WARNINGFLAGS := -Wall -Wextra
 
 CPPINCLUDEFLAGS := source/bech32
 

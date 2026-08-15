@@ -23,6 +23,7 @@ typedef enum {
 
     malformed_contact_block,
 
+    key_exchange_error,
     shared_secret_generation_error
 } result;
 

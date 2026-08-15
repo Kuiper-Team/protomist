@@ -57,7 +57,8 @@ result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
     struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
     struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
 
-    const unsigned char* MIST_INITIATOR_IK_PK
+    const unsigned char* MIST_INITIATOR_IK_PK,
+    const unsigned char* MIST_INITIATOR_IK_SK
 );
 
 result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
