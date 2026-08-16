@@ -69,7 +69,10 @@ result MIST_ROTATE_RECIPIENT_PQSPK(
     struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
     struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
 ) {
-    crypto_kem_mlkem768_keypair(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK, MIST_PREKEY_SECRETS->MIST_PQSPK_SK);
+    crypto_kem_mlkem768_keypair(
+        MIST_PREKEY_BUNDLE->MIST_PQSPK_PK,
+        MIST_PREKEY_SECRETS->MIST_PQSPK_SK
+    );
 
     return success;
 }
@@ -147,38 +150,46 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
-    //XEdDSA signature creation here.
-    //EncodeKEM()
+    if (xed25519_sign(
+        MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE,
+        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
+        MIST_PREKEY_BUNDLE_output->MIST_SPK_PK,
+        sizeof(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK),
+        MIST_Z_SPK
+    ) != 0)
+        return xeddsa_signing_error;
 
-    //Important: Do we keep them as secrets, or wipe them?
+    if (xed25519_sign(
+        MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE,
+        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
+        MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK,
+        sizeof(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK),
+        MIST_Z_PQSPK
+    ) != 0)
+        return xeddsa_signing_error;
+
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     sodium_memzero(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
     return success;
 }
 
-//Where should Z values be stored?
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    const unsigned char* MIST_Z_SPK,
-    const unsigned char* MIST_Z_PQSPK
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 ) {
-    const char* spk_identifier = MIST_PREKEY_BUNDLE->MIST_SPK_IDENTIFIER;
-    const char* pqspk_identifier = MIST_PREKEY_BUNDLE->MIST_PQSPK_IDENTIFIER;
-
     if (xed25519_verify(
         MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE,
         MIST_PREKEY_BUNDLE->MIST_IK_PK,
-        spk_identifier,
-        strlen((char*) spk_identifier) + 1
+        MIST_PREKEY_BUNDLE->MIST_SPK_PK,
+        sizeof(MIST_PREKEY_BUNDLE->MIST_SPK_PK)
     ) != 0)
         return incorrect_signature;
 
     if (xed25519_verify(
         MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE,
         MIST_PREKEY_BUNDLE->MIST_IK_PK,
-        pqspk_identifier, //To-do: Fix according to EncodeKEM().
-        strlen((char*) pqspk_identifier) + 1
+        MIST_PREKEY_BUNDLE->MIST_PQSPK_PK,
+        sizeof(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK)
     ) != 0)
         return incorrect_signature;
 

@@ -27,8 +27,8 @@ struct recipient_prekey_bundle {
     char* MIST_SPK_IDENTIFIER;
     char* MIST_PQSPK_IDENTIFIER;
 
-    unsigned char MIST_SPK_SIGNATURE[crypto_sign_BYTES];
-    unsigned char MIST_PQSPK_SIGNATURE[crypto_sign_BYTES];
+    unsigned char MIST_SPK_SIGNATURE[MIST_XEDDSA_SIGNATURE_SIZE];
+    unsigned char MIST_PQSPK_SIGNATURE[MIST_XEDDSA_SIGNATURE_SIZE];
 };
 
 struct recipient_prekey_secrets {
@@ -71,9 +71,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
 );
 
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    const unsigned char* MIST_Z_SPK,
-    const unsigned char* MIST_Z_PQSPK
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 );
 
 result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY(

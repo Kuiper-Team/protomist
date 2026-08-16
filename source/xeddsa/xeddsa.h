@@ -7,7 +7,7 @@ int xed25519_sign(
 
     const unsigned char* curve25519_privkey, /* 32 bytes */
     const unsigned char* msg,
-    const unsigned long msg_len, /* <= 256 bytes */
+    const unsigned long msg_len,
     const unsigned char* random
 ); /* 64 bytes */
 
@@ -17,6 +17,6 @@ int xed25519_verify(
     const unsigned char* curve25519_pubkey, /* 32 bytes */
     const unsigned char* msg,
     const unsigned long msg_len
-); /* <= 256 bytes */
+);
 
 #endif

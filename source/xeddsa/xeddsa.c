@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "additions.h"
-#include "crypto_verify_32.h"
 
 int xed25519_sign(,
     unsigned char* signature_out,
