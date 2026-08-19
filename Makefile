@@ -17,6 +17,8 @@ COBJECTS := \
 	source/pqxdh.o \
 	source/wordlists/apply.o \
 	source/wordlists/languages.o \
+	source/xeddsa/additions.o \
+	source/xeddsa/xeddsa.o \
 	examples/identity_creation.o
 
 CPPOBJECTS := \
