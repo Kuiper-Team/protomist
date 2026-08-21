@@ -2,7 +2,7 @@
 #include <sc.h>
 #include <sodium.h>
 
-#include <xeddsa.h>
+#include "xeddsa.h"
 #include "utils.c"
 
 // Needed by `ed25519_priv_sign`.
@@ -23,10 +23,11 @@ static const uint8_t HASH_PADDING[32] = {
  * @param nonce (in): 64 bytes of secure random data.
  */
 void ed25519_priv_sign(uint8_t* sig,
-                       const uint8_t* priv,
-                       const uint8_t* msg,
-                       const uint32_t msg_size,
-                       const uint8_t* nonce) {
+    const uint8_t* priv,
+    const uint8_t* msg,
+    const uint32_t msg_size,
+    const uint8_t* nonce
+) {
     ge_p3 ed25519_pub_ge;
     uint8_t A[32];
 
@@ -96,7 +97,12 @@ void ed25519_priv_sign(uint8_t* sig,
  * @param msg (in): The message to sign.
  * @param msg_size (in): Size of the message to sign, in bytes.
  */
-void ed25519_seed_sign(uint8_t* sig, const uint8_t* seed, const uint8_t* msg, const uint32_t msg_size) {
+void ed25519_seed_sign(
+    uint8_t* sig,
+    const uint8_t* seed,
+    const uint8_t* msg,
+    const uint32_t msg_size
+) {
     // libsodium needs seed and public key in 64 adjacent bytes
     uint8_t seed_and_pub[64];
 
@@ -121,8 +127,9 @@ void ed25519_seed_sign(uint8_t* sig, const uint8_t* seed, const uint8_t* msg, co
  * @return 0 in case of success, -1 if the verification fails.
  */
 int ed25519_verify(const uint8_t* sig,
-                   const uint8_t* ed25519_pub,
-                   const uint8_t* msg,
-                   const uint32_t msg_size) {
+    const uint8_t* ed25519_pub,
+    const uint8_t* msg,
+    const uint32_t msg_size
+) {
     return crypto_sign_verify_detached(sig, msg, msg_size, ed25519_pub);
 }
