@@ -12,10 +12,10 @@
 #include "../source/wordlists/languages.h"
 
 int main() {
-    if (sodium_init() == -1) {
-        fprintf(stderr, "ERROR: libsodium could not be initialized.");
+    if (initialize_protomist() != success) {
+        fprintf(stderr, "ERROR: Initialization failed.");
 
-        exit(1);
+        return 1;
     }
 
     printf("\n-- IDENTITY --\n");

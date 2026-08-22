@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <xeddsa.h>
 
 #include "constants.h"
 #include "helpers.h"
 #include "identity.h"
-#include "xeddsa/xeddsa.h"
 
 static result generate_identifier(
     char** output,
@@ -150,7 +150,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
-    if (xed25519_sign(
+    if (ed25519_priv_sign(
         MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE,
         MIST_PREKEY_SECRETS_output->MIST_IK_SK,
         MIST_PREKEY_BUNDLE_output->MIST_SPK_PK,
@@ -159,7 +159,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     ) != 0)
         return xeddsa_signing_error;
 
-    if (xed25519_sign(
+    if (ed25519_priv_sign(
         MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE,
         MIST_PREKEY_SECRETS_output->MIST_IK_SK,
         MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK,
@@ -177,7 +177,7 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
 result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
     const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 ) {
-    if (xed25519_verify(
+    if (ed25519_verify(
         MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE,
         MIST_PREKEY_BUNDLE->MIST_IK_PK,
         MIST_PREKEY_BUNDLE->MIST_SPK_PK,
@@ -185,7 +185,7 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
     ) != 0)
         return incorrect_signature;
 
-    if (xed25519_verify(
+    if (ed25519_verify(
         MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE,
         MIST_PREKEY_BUNDLE->MIST_IK_PK,
         MIST_PREKEY_BUNDLE->MIST_PQSPK_PK,

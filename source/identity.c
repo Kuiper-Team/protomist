@@ -274,7 +274,7 @@ result MIST_GENERATE_SUBKEY(
     );
 
     switch (MIST_ALGORITHM) {
-        case ed25519:
+        case ed25519_algorithm:
             crypto_sign_seed_keypair(
                 MIST_SUB_PK_output,
                 MIST_SUB_SK_output,
@@ -282,7 +282,7 @@ result MIST_GENERATE_SUBKEY(
             );
 
             return success;
-        case x25519:
+        case x25519_algorithm:
             crypto_box_seed_keypair(
                 MIST_SUB_PK_output,
                 MIST_SUB_SK_output,

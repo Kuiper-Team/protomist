@@ -29,8 +29,8 @@
 #define bech32m_encoding "bech32m"
 
 typedef enum {
-    ed25519,
-    x25519
+    ed25519_algorithm,
+    x25519_algorithm
 } subkey_algorithm;
 
 #endif

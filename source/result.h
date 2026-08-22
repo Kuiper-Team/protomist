@@ -5,6 +5,7 @@ typedef enum {
     success,
 
     libsodium_initialization_error,
+    libxeddsa_initialization_error,
     out_of_memory,
 
     seed_hashing_error,
