@@ -8,6 +8,8 @@
 #include "constants.h"
 #include "result.h"
 
+//To-do: Unify data representation using protocol buffers.
+
 // Source - https://stackoverflow.com/a/18972477
 // Posted by rcs, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-07-21, License - CC BY-SA 4.0
@@ -122,6 +124,7 @@ result MIST_DECODE_CONTACT_BLOCK( //Don't forget to free() all the outputs.
     strncpy(*MIST_ADDRESS_output, decoded, label_start);
     (*MIST_ADDRESS_output)[address_size - 1] = '\0';
     //From Linux manual pages, strncpy(3): The name of these functions is confusing. These functions produce a null-padded character sequence, not a string (see string_copying(7)).
+    //Therefore, the line below strncpy() adds a null terminator to convert *MIST_ADDRESS_output into a C string.
 
     copy_string_range(*MIST_LABEL_output, decoded, label_start + 1, memo_start - 1);
     copy_string_range(*MIST_MEMO_output, decoded, memo_start + 1, decoded_size - 2);

@@ -6,7 +6,7 @@
 #include "result.h"
 
 result initialize_protomist() {
-    if (sodium_init < 0)
+    if (sodium_init() < 0)
         return libsodium_initialization_error;
 
     if (xeddsa_init() < 0)

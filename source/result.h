@@ -19,7 +19,6 @@ typedef enum {
     bech32m_invalid,
 
     incorrect_signature,
-    xeddsa_signing_error,
 
     invalid_subkey_algorithm,
 

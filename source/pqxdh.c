@@ -150,23 +150,20 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     randombytes_buf(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
 
-    if (ed25519_priv_sign(
+    ed25519_priv_sign(
         MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE,
         MIST_PREKEY_SECRETS_output->MIST_IK_SK,
         MIST_PREKEY_BUNDLE_output->MIST_SPK_PK,
         sizeof(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK),
         MIST_Z_SPK
-    ) != 0)
-        return xeddsa_signing_error;
-
-    if (ed25519_priv_sign(
+    );
+    ed25519_priv_sign(
         MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE,
         MIST_PREKEY_SECRETS_output->MIST_IK_SK,
         MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK,
         sizeof(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK),
         MIST_Z_PQSPK
-    ) != 0)
-        return xeddsa_signing_error;
+    );
 
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     sodium_memzero(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));

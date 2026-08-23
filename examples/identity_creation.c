@@ -8,6 +8,7 @@
 #include "../source/constants.h"
 #include "../source/contacts.h"
 #include "../source/identity.h"
+#include "../source/initialize.h"
 #include "../source/result.h"
 #include "../source/wordlists/languages.h"
 
@@ -117,7 +118,7 @@ int main() {
         example1_sub_sk,
         seed,
         "example1",
-        ed25519
+        ed25519_algorithm
     );
 
     unsigned char example2_sub_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
@@ -127,7 +128,7 @@ int main() {
         example2_sub_sk,
         seed,
         "example2",
-        x25519
+        x25519_algorithm
     );
 
     assert(example1_sub_result == success && example2_sub_result == success);

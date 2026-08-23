@@ -4,7 +4,7 @@ CPP := g++
 CFLAGS := -std=c11
 CPPFLAGS := -std=c++17
 
-LDFLAGS := -lsodium
+LDFLAGS := -lsodium -lxeddsa
 WARNINGFLAGS := -Wall -Wextra
 
 CPPINCLUDEFLAGS := source/bech32
