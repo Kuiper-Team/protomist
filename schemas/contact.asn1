@@ -1,24 +1,20 @@
 Contact-Module DEFINITIONS ::= BEGIN
-    IMPORTS
-        Bytes
-    FROM Bytes-Module;
-
     Recipient-Prekey-Bundle ::= SEQUENCE {
-        Identity-PK Bytes,
+        identity-pk OCTET STRING,
 
-        PQSSPK-PK Bytes,
-        SPK-PK Bytes,
+        pqspk OCTET STRING,
+        spk OCTET STRING,
 
-        SPK-Identifier Bytes,
-        PQSPK-Identifier Bytes,
+        spk-identifier OCTET STRING,
+        pqspk-identifier OCTET STRING,
 
-        SPK-Signature Bytes,
-        PQSPK-Signature Bytes
+        spk-signature OCTET STRING,
+        pqspk-signature OCTET STRING
     }
 
     Contact ::= SEQUENCE {
-        Label UTF8String,
-        Memo UTF8String,
-        Prekey-Bundle Recipient-Prekey-Bundle
+        label UTF8String,
+        memo UTF8String,
+        prekey-bundle Recipient-Prekey-Bundle
     }
 END

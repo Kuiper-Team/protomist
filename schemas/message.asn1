@@ -1,0 +1,20 @@
+Message-Module DEFINITIONS ::= BEGIN
+    Flag ::= ENUMERATED {
+        message (0),
+        delete (1),
+        edit (2)
+    }
+
+    Message-Header ::= SEQUENCE {
+        flag Flag,
+        message-number INTEGER,
+        previous-chain-length INTEGER,
+        dh-ratchet-pk OCTET STRING
+    }
+
+    Message ::= SEQUENCE {
+        header Message-Header,
+        
+        body UTF8String,
+    }
+END

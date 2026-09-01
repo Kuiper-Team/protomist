@@ -1,3 +1,0 @@
-Bytes-Module DEFINITIONS ::= BEGIN
-    Bytes ::= OCTET STRING
-END
