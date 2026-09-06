@@ -1,0 +1,20 @@
+Contact-Module DEFINITIONS ::= BEGIN
+    Recipient-Prekey-Bundle ::= SEQUENCE {
+        identity-pk OCTET STRING,
+
+        pqspk OCTET STRING,
+        spk OCTET STRING,
+
+        spk-identifier UTF8String,
+        pqspk-identifier UTF8String,
+
+        spk-signature OCTET STRING,
+        pqspk-signature OCTET STRING
+    }
+
+    Contact ::= SEQUENCE {
+        label UTF8String,
+        memo UTF8String,
+        prekey-bundle Recipient-Prekey-Bundle
+    }
+END
