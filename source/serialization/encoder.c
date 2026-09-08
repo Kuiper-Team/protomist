@@ -5,11 +5,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
-#include "generated/Contact.h"
-#include "generated/Message.h"
-#include "generated/Recipient-Prekey-Bundle.h"
+#include <Contact.h>
+//#include <Message.h> //The schema isn't ready yet.
+#include <Recipient-Prekey-Bundle.h>
 #include "../constants.h"
 #include "../pqxdh.h"
 #include "../result.h"
@@ -30,45 +29,63 @@ static UTF8String_t to_UTF8String(
 ) {
     UTF8String_t output;
     output.buf = (uint8_t *) input;
-    output.size = strlen(input); //Not a null-terminated string originally.
+    output.size = strlen(input); //Originally, not a null-terminated string but a subtype of OCTET STRING, thus a byte sequence.
 
     return output;
 }
 
-result MIST_ENCODE_CONTACT_SCHEMA(
-    unsigned char** output,
-    size_t* output_size,
+static result encode_using_der(
+    unsigned char* output,
 
-    const char* label,
-    const char* memo,
-    const recipient_prekey_bundle* prekey_bundle
+    const asn_TYPE_descriptor_t* type_descriptor,
+    const void* form
 ) {
-    Contact_t contact = {0};
-
-    Recipient_Prekey_Bundle_t prekey_bundle_asn1c = {0};
-    prekey_bundle_asn1c.identity_pk = to_OCTET_STRING(prekey_bundle->MIST_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES);
-    prekey_bundle_asn1c.pqspk = to_OCTET_STRING(prekey_bundle->MIST_SPK_PK, crypto_box_PUBLICKEYBYTES);
-    prekey_bundle_asn1c.spk = to_OCTET_STRING(prekey_bundle->MIST_PQSPK_PK, crypto_kem_mlkem768_PUBLICKEYBYTES);
-    prekey_bundle_asn1c.spk_identifier = to_UTF8String(prekey_bundle->MIST_SPK_IDENTIFIER);
-    prekey_bundle_asn1c.pqspk_identifier = to_UTF8String(prekey_bundle->MIST_PQSPK_IDENTIFIER);
-    prekey_bundle_asn1c.spk_signature = to_OCTET_STRING(prekey_bundle->MIST_SPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
-    prekey_bundle_asn1c.pqspk_signature = to_OCTET_STRING(prekey_bundle->MIST_PQSPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
-
-    contact.label = to_UTF8String(label);
-    contact.memo = to_UTF8String(memo);
-    contact.prekey_bundle = prekey_bundle_asn1c;
-
     asn_encode_to_new_buffer_result_t encoded = asn_encode_to_new_buffer(
         0,
         ATS_DER,
-        &asn_DEF_Contact,
-        &contact
+        type_descriptor,
+        form
     );
     if (encoded.result.encoded < 0)
         return serialization_error;
 
     *output = (unsigned char*) encoded.buffer;
-    *output_size = (size_t) encoded.result.encoded; //The original value is a ssize_t.
+    *output = (size_t) encoded.result.encoded; //The original value is a ssize_t.
+
+    return success;
+}
+
+result MIST_SERIALIZE_CONTACT(
+    unsigned char** output,
+    size_t* output_size,
+
+    const char* MIST_LABEL,
+    const char* MIST_MEMO,
+    const recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+) {
+    Contact_t contact = {0};
+
+    Recipient_Prekey_Bundle_t prekey_bundle = {0};
+    prekey_bundle.identity_pk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES);
+    prekey_bundle.pqspk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_PK, crypto_box_PUBLICKEYBYTES);
+    prekey_bundle.spk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK, crypto_kem_mlkem768_PUBLICKEYBYTES);
+    prekey_bundle.spk_identifier = to_UTF8String(MIST_PREKEY_BUNDLE->MIST_SPK_IDENTIFIER);
+    prekey_bundle.pqspk_identifier = to_UTF8String(MIST_PREKEY_BUNDLE->MIST_PQSPK_IDENTIFIER);
+    prekey_bundle.spk_signature = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
+    prekey_bundle.pqspk_signature = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
+
+    contact.label = to_UTF8String(label);
+    contact.memo = to_UTF8String(memo);
+    contact.prekey_bundle = prekey_bundle;
+
+    encoding_result = encode_using_der(
+        *output,
+        *output_size,
+        &asn_DEF_Contact,
+        &contact
+    );
+    if (encoding_result != success)
+        return encoding_result;
 
     return success;
 }

@@ -27,7 +27,8 @@ typedef enum {
     key_exchange_error,
     shared_secret_generation_error,
 
-    serialization_error
+    serialization_error,
+    deserialization_error
 } result;
 
 #endif
