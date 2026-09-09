@@ -12,7 +12,7 @@ result MIST_SERIALIZE_CONTACT(
 
     const char* MIST_LABEL,
     const char* MIST_MEMO,
-    const recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 );
 
 #endif

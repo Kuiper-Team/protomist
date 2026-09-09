@@ -1,13 +1,17 @@
 C := gcc
 CPP := g++
 
-CFLAGS := -std=c11
-CPPFLAGS := -std=c++17
+CFLAGS := -std=c11 -g -fsanitize=address
+CPPFLAGS := -std=c++17 -g -fsanitize=address
 
-LDFLAGS := -lsodium -lxeddsa
-WARNINGFLAGS := -Wall -Wextra
+LDFLAGS := -lsodium -lxeddsa -g -fsanitize=address
+WARNINGFLAGS := -Wall -Wextra -Wno-missing-braces
 
+CINCLUDEFLAGS := source/serialization/generated
 CPPINCLUDEFLAGS := source/bech32
+
+ASN1CGENERATEDC := $(wildcard source/serialization/generated/*.c)
+ASN1CGENERATEDOBJECTS := $(ASN1CGENERATEDC:.c=.o)
 
 COBJECTS := \
 	source/bech32/convert_bits.o \
@@ -16,6 +20,9 @@ COBJECTS := \
 	source/identity.o \
 	source/initialize.o \
 	source/pqxdh.o \
+	source/serialization/decoder.o \
+	source/serialization/encoder.o \
+	$(ASN1CGENERATEDOBJECTS) \
 	source/wordlists/apply.o \
 	source/wordlists/languages.o \
 	examples/identity_creation.o
@@ -28,7 +35,7 @@ identity_creation.o: $(COBJECTS) $(CPPOBJECTS)
 	$(CPP) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
-	$(C) $(CFLAGS) -c $< -o $@ $(WARNINGFLAGS)
+	$(C) $(CFLAGS) -c $< -o $@ -I $(CINCLUDEFLAGS) $(WARNINGFLAGS)
 
 %.o: %.cpp
 	$(CPP) $(CPPFLAGS) -c $< -o $@ -I $(CPPINCLUDEFLAGS) $(WARNINGFLAGS)

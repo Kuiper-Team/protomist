@@ -35,7 +35,8 @@ static UTF8String_t to_UTF8String(
 }
 
 static result encode_using_der(
-    unsigned char* output,
+    unsigned char** output,
+    size_t* output_size,
 
     const asn_TYPE_descriptor_t* type_descriptor,
     const void* form
@@ -50,7 +51,7 @@ static result encode_using_der(
         return serialization_error;
 
     *output = (unsigned char*) encoded.buffer;
-    *output = (size_t) encoded.result.encoded; //The original value is a ssize_t.
+    *output_size = (size_t) encoded.result.encoded; //The original value is a ssize_t.
 
     return success;
 }
@@ -61,7 +62,7 @@ result MIST_SERIALIZE_CONTACT(
 
     const char* MIST_LABEL,
     const char* MIST_MEMO,
-    const recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
 ) {
     Contact_t contact = {0};
 
@@ -74,13 +75,13 @@ result MIST_SERIALIZE_CONTACT(
     prekey_bundle.spk_signature = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
     prekey_bundle.pqspk_signature = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_PQSPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);
 
-    contact.label = to_UTF8String(label);
-    contact.memo = to_UTF8String(memo);
+    contact.label = to_UTF8String(MIST_LABEL);
+    contact.memo = to_UTF8String(MIST_MEMO);
     contact.prekey_bundle = prekey_bundle;
 
-    encoding_result = encode_using_der(
-        *output,
-        *output_size,
+    result encoding_result = encode_using_der(
+        output,
+        output_size,
         &asn_DEF_Contact,
         &contact
     );

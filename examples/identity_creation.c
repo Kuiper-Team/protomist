@@ -9,7 +9,10 @@
 #include "../source/contacts.h"
 #include "../source/identity.h"
 #include "../source/initialize.h"
+#include "../source/pqxdh.h"
 #include "../source/result.h"
+#include "../source/serialization/decoder.h"
+#include "../source/serialization/encoder.h"
 #include "../source/wordlists/languages.h"
 
 int main() {
@@ -81,7 +84,7 @@ int main() {
     MIST_CREATE_CONTACT_BLOCK(
         &contact_block,
         address,
-        "Me",
+        label,
         memo
     );
 
@@ -108,6 +111,49 @@ int main() {
 
     free(address);
     free(contact_block);
+
+    printf("\n-- CONTACT BLOCK SERIALIZATION --");
+
+    struct recipient_prekey_bundle prekey_bundle;
+    struct recipient_prekey_secrets prekey_secrets;
+    result prekey_bundle_result = MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
+        &prekey_bundle,
+        &prekey_secrets,
+        ed25519_pk,
+        ed25519_sk,
+        0
+    );
+    assert(prekey_bundle_result == success);
+
+    unsigned char* encoded;
+    size_t encoded_size;
+    result contact_serialization_result = MIST_SERIALIZE_CONTACT(
+        &encoded,
+        &encoded_size,
+        label,
+        memo,
+        &prekey_bundle
+    );
+    assert(contact_serialization_result == success);
+
+    char* ds_label;
+    char* ds_memo;
+    struct recipient_prekey_bundle ds_prekey_bundle;
+    result contact_deserialization_result = MIST_DESERIALIZE_CONTACT(
+        &ds_label,
+        &ds_memo,
+        &ds_prekey_bundle,
+        encoded,
+        encoded_size
+    );
+    assert(contact_deserialization_result == success);
+
+    assert(memcmp(ds_prekey_bundle.MIST_IK_PK, prekey_bundle.MIST_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES) == 0);
+
+    free(ds_label);
+    free(ds_memo);
+
+    free(encoded);
 
     printf("\n-- SUBKEYS --\n");
 

@@ -10,7 +10,7 @@
 result MIST_DESERIALIZE_CONTACT(
     char** MIST_LABEL_output,
     char** MIST_MEMO_output,
-    recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
 
     const unsigned char* MIST_ENCODED,
     const size_t MIST_ENCODED_size

@@ -1,22 +1,14 @@
 ASN_MODULE_SRCS=	\
-	Flag.c	\
-	Message-Header.c	\
-	Message.c
+	Recipient-Prekey-Bundle.c	\
+	Contact.c
 
 ASN_MODULE_HDRS=	\
-	Flag.h	\
-	Message-Header.h	\
-	Message.h
+	Recipient-Prekey-Bundle.h	\
+	Contact.h
 
 ASN_MODULE_HDRS+=OPEN_TYPE.h
 ASN_MODULE_SRCS+=OPEN_TYPE.c
 ASN_MODULE_HDRS+=constr_CHOICE.h
-ASN_MODULE_HDRS+=INTEGER.h
-ASN_MODULE_SRCS+=INTEGER.c
-ASN_MODULE_HDRS+=NativeEnumerated.h
-ASN_MODULE_SRCS+=NativeEnumerated.c
-ASN_MODULE_HDRS+=NativeInteger.h
-ASN_MODULE_SRCS+=NativeInteger.c
 ASN_MODULE_HDRS+=UTF8String.h
 ASN_MODULE_SRCS+=UTF8String.c
 ASN_MODULE_HDRS+=OCTET_STRING.h
@@ -65,8 +57,19 @@ ASN_MODULE_HDRS+=per_encoder.h
 ASN_MODULE_SRCS+=per_encoder.c
 ASN_MODULE_HDRS+=per_opentype.h
 ASN_MODULE_SRCS+=per_opentype.c
+ASN_MODULE_HDRS+=oer_decoder.h
+ASN_MODULE_HDRS+=oer_encoder.h
+ASN_MODULE_HDRS+=oer_support.h
+ASN_MODULE_SRCS+=oer_decoder.c
+ASN_MODULE_SRCS+=oer_encoder.c
+ASN_MODULE_SRCS+=oer_support.c
+ASN_MODULE_SRCS+=OPEN_TYPE_oer.c
+ASN_MODULE_SRCS+=BIT_STRING_oer.c
+ASN_MODULE_SRCS+=OCTET_STRING_oer.c
+ASN_MODULE_SRCS+=constr_CHOICE_oer.c
+ASN_MODULE_SRCS+=constr_SEQUENCE_oer.c
 
-ASN_MODULE_CFLAGS=-DASN_DISABLE_OER_SUPPORT -DASN_DISABLE_PER_SUPPORT 
+ASN_MODULE_CFLAGS=
 
 lib_LTLIBRARIES+=libasncodec.la
 libasncodec_la_SOURCES=$(ASN_MODULE_SRCS) $(ASN_MODULE_HDRS)
