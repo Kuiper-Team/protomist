@@ -12,33 +12,41 @@
 
 static result from_OCTET_STRING(
     unsigned char** output,
+    size_t* output_size, //Optional, pass NULL if not needed.
 
     const OCTET_STRING_t input
 ) {
     const size_t size = input.size;
-    *output = malloc(size * sizeof(unsigned char));
+    *output = malloc(size * sizeof(**output));
     if (*output == NULL)
         return out_of_memory;
 
-    memcpy(*output, input.buf, size);
+    memcpy(*output, (unsigned char*) input.buf, size);
+
+    if (output_size != NULL)
+        *output_size = size;
 
     return success;
 }
 
 static result from_UTF8String(
     char** output,
+    size_t* output_size, //Optional, pass NULL if not needed.
 
     const UTF8String_t input
 ) {
     const size_t length = input.size;
     const size_t size = length + 1;
-    *output = malloc(size * sizeof(char));
+    *output = malloc(size * sizeof(**output));
     if (*output == NULL)
         return out_of_memory;
 
-    const size_t null_terminator_index = size - 1;
-    memcpy(*output, input.buf, length);
-    (*output)[null_terminator_index] = '\0';
+    const size_t last_index = size - 1;
+    strncpy(*output, (char*) input.buf, length);
+    (*output)[last_index] = '\0';
+
+    if (output_size != NULL)
+        *output_size = size;
 
     return success;
 }
@@ -66,25 +74,36 @@ result MIST_DESERIALIZE_CONTACT(
     unsigned char *ik_pk, *spk_pk, *pqspk_pk, *spk_signature, *pqspk_signature;
     char *spk_identifier, *pqspk_identifier;
 
+    size_t ik_pk_size, spk_pk_size, pqspk_pk_size, spk_identifier_size, pqspk_identifier_size, spk_signature_size, pqspk_signature_size;
+
     Recipient_Prekey_Bundle_t prekey_bundle = contact->prekey_bundle;
-    from_OCTET_STRING(&ik_pk, prekey_bundle.identity_pk);
-    from_OCTET_STRING(&spk_pk, prekey_bundle.spk);
-    from_OCTET_STRING(&pqspk_pk, prekey_bundle.pqspk);
-    from_UTF8String(&spk_identifier, prekey_bundle.spk_identifier);
-    from_UTF8String(&pqspk_identifier, prekey_bundle.pqspk_identifier);
-    from_OCTET_STRING(&spk_signature, prekey_bundle.identity_pk);
-    from_OCTET_STRING(&pqspk_signature, prekey_bundle.identity_pk);
 
-    from_UTF8String(MIST_LABEL_output, contact->label);
-    from_UTF8String(MIST_MEMO_output, contact->memo);
+    from_OCTET_STRING(&ik_pk, &ik_pk_size, prekey_bundle.identity_pk);
+    from_OCTET_STRING(&spk_pk, &spk_pk_size, prekey_bundle.spk);
+    from_OCTET_STRING(&pqspk_pk, &pqspk_pk_size, prekey_bundle.pqspk);
+    from_UTF8String(&spk_identifier, &spk_identifier_size, prekey_bundle.spk_identifier);
+    from_UTF8String(&pqspk_identifier, &pqspk_identifier_size, prekey_bundle.pqspk_identifier);
+    from_OCTET_STRING(&spk_signature, &spk_signature_size, prekey_bundle.spk_signature);
+    from_OCTET_STRING(&pqspk_signature, &pqspk_signature_size, prekey_bundle.pqspk_signature);
 
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, ik_pk, sizeof(MIST_PREKEY_BUNDLE_output->MIST_IK_PK));
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK, spk_pk, sizeof(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK));
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK, pqspk_pk, sizeof(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK));
+    from_UTF8String(MIST_LABEL_output, NULL, contact->label);
+    from_UTF8String(MIST_MEMO_output, NULL, contact->memo);
+
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, ik_pk, ik_pk_size);
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK, spk_pk, spk_pk_size);
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK, pqspk_pk, pqspk_pk_size);
     MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER = spk_identifier;
     MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER = pqspk_identifier;
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE, spk_signature, sizeof(MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE));
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE, pqspk_signature, sizeof(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE));
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE, spk_signature, spk_signature_size);
+    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE, pqspk_signature, pqspk_signature_size);
+
+    free(ik_pk);
+    free(spk_pk);
+    free(pqspk_pk);
+    free(spk_identifier);
+    free(pqspk_identifier);
+    free(spk_signature);
+    free(pqspk_signature);
 
     return success;
 }

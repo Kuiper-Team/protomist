@@ -114,8 +114,8 @@ int main() {
 
     printf("\n-- CONTACT BLOCK SERIALIZATION --");
 
-    struct recipient_prekey_bundle prekey_bundle;
-    struct recipient_prekey_secrets prekey_secrets;
+    struct recipient_prekey_bundle prekey_bundle = {0};
+    struct recipient_prekey_secrets prekey_secrets = {0};
     result prekey_bundle_result = MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
         &prekey_bundle,
         &prekey_secrets,
@@ -155,6 +155,7 @@ int main() {
 
     free(encoded);
 
+    /*
     printf("\n-- SUBKEYS --\n");
 
     unsigned char example1_sub_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
@@ -195,4 +196,5 @@ int main() {
     assert(example2_sub_sk_bech32m != NULL);
 
     printf("example1:\n%s\n%s\n\nexample2:\n%s\n%s\n", example1_sub_pk_bech32m, example1_sub_sk_bech32m, example2_sub_pk_bech32m, example2_sub_sk_bech32m);
+    */
 }

@@ -1,10 +1,10 @@
 C := gcc
 CPP := g++
 
-CFLAGS := -std=c11 -g -fsanitize=address
-CPPFLAGS := -std=c++17 -g -fsanitize=address
+CFLAGS := -std=c11 -g
+CPPFLAGS := -std=c++17 -g
 
-LDFLAGS := -lsodium -lxeddsa -g -fsanitize=address
+LDFLAGS := -lsodium -lxeddsa -g
 WARNINGFLAGS := -Wall -Wextra -Wno-missing-braces
 
 CINCLUDEFLAGS := source/serialization/generated

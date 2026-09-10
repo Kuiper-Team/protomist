@@ -24,7 +24,7 @@ static result generate_identifier(
         *size_output = size;
 
     char number_string[number_digits + 1];
-    snprintf(
+    snprintf( //Inefficient
         number_string,
         sizeof(number_string),
         "%zu", //Format specifier to handle size_t
