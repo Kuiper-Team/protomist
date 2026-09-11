@@ -67,7 +67,7 @@ result MIST_JOIN_MNEMONIC_SENTENCE(
     output_length += space_count;
 
     const size_t output_size = output_length + 1;
-    *output = (char*) malloc(output_size * sizeof(char));
+    *output = (char*) malloc(output_size * sizeof(**output));
     if (*output == NULL)
         return out_of_memory;
 

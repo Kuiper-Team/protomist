@@ -18,7 +18,7 @@ static result generate_identifier(
     const char* prefix,
     const size_t number
 ) { //Don't forget to free() output!
-    const size_t number_digits = count_digits(number); 
+    const size_t number_digits = (size_t) count_digits((unsigned int) number); 
     const size_t size = strlen(prefix) + number_digits + 1;
     if (size_output != NULL)
         *size_output = size;
@@ -31,7 +31,7 @@ static result generate_identifier(
         number
     );
 
-    *output = (char*) malloc(size);
+    *output = (char*) malloc(size * sizeof(**output));
     if (*output == NULL)
         return out_of_memory;   
 
@@ -49,6 +49,7 @@ result MIST_ROTATE_INITIATOR_EK(
         MIST_PREKEY_BUNDLE->MIST_EK_PK,
         MIST_PREKEY_SECRETS->MIST_EK_SK
     );
+    //To-do: Update signatures and identifiers.
 
     return success;
 }
@@ -61,6 +62,7 @@ result MIST_ROTATE_RECIPIENT_SPK(
         MIST_PREKEY_BUNDLE->MIST_SPK_PK,
         MIST_PREKEY_SECRETS->MIST_SPK_SK
     );
+    //To-do: Update signatures and identifiers.
 
     return success;
 }

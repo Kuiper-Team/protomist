@@ -59,7 +59,7 @@ result apply_wordlist( //Example: {"abandon", ...}
         const char* word = list_pointer[word_index];
         const size_t word_size = strlen(word) + 1;
 
-        (*output)[r] = (char*) malloc(word_size * sizeof(char));
+        (*output)[r] = (char*) malloc(word_size * sizeof(**output));
         if ((*output)[r] == NULL)
             return out_of_memory;
 

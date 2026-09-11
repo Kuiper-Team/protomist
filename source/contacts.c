@@ -109,9 +109,9 @@ result MIST_DECODE_CONTACT_BLOCK( //Don't forget to free() all the outputs.
     const size_t label_size = memo_start - label_start;
     const size_t memo_size = decoded_size - memo_start - 1;
 
-    *MIST_ADDRESS_output = (char*) malloc(address_size * sizeof(char));
-    *MIST_LABEL_output = (char*) malloc(label_size * sizeof(char));
-    *MIST_MEMO_output = (char*) malloc(memo_size * sizeof(char));
+    *MIST_ADDRESS_output = (char*) malloc(address_size * sizeof(**MIST_ADDRESS_output));
+    *MIST_LABEL_output = (char*) malloc(label_size * sizeof(**MIST_LABEL_output));
+    *MIST_MEMO_output = (char*) malloc(memo_size * sizeof(**MIST_MEMO_output));
     if (*MIST_ADDRESS_output == NULL || *MIST_LABEL_output == NULL || *MIST_MEMO_output == NULL) {
         free(bytes);
         free(*MIST_ADDRESS_output);

@@ -4,8 +4,6 @@
 #include <math.h>
 #include <stddef.h>
 
-#define count_digits(number) (number == 0 ? 1 : floor(log10(number)) + 1)
-
 void concatenate_bytes(
     unsigned char* destination,
 

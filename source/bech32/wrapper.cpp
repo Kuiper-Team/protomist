@@ -37,7 +37,7 @@ result MIST_BECH32M_ENCODE(
     std::string encoded_cpp = bech32::Encode(bech32::Encoding::BECH32M, hrp, converted);
     const char* encoded = encoded_cpp.c_str();
 
-    *output = (char*) malloc(strlen(encoded) + 1);
+    *output = (char*) malloc((strlen(encoded) + 1) * sizeof(**output));
     if (*output == NULL)
         return out_of_memory;
 
