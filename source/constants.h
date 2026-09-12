@@ -4,10 +4,10 @@
 #include <sodium.h>
 
 //String Literals
-#define MIST_BECH32M_HRP "mist"
-#define MIST_BECH32M_HRP_CONTACT "mistcontact"
-#define MIST_BECH32M_HRP_SECRET "mistsecret"
-#define MIST_BECH32M_HRP_SIGNATURE "mistsign"
+#define MIST_BECH32_HRP "mist"
+#define MIST_BECH32_HRP_CONTACT "mistcontact"
+#define MIST_BECH32_HRP_SECRET "mistsecret"
+#define MIST_BECH32_HRP_SIGNATURE "mistsign"
 
 #define MIST_CONTACT_FIELD_SEPERATOR "\n" //Should be gotten rid of
 
@@ -16,6 +16,14 @@
 #define MIST_SK_IDENTIFIER_PREFIX "sk_" //Should be gotten rid of
 
 //Sizes
+#define MIST_BECH32_MIN_HRP_LENGTH 1
+#define MIST_BECH32_MAX_HRP_LENGTH 83
+#define MIST_BECH32_SEPERATOR_LENGTH 1
+#define MIST_BECH32_MIN_DATA_LENGTH 6
+#define MIST_BECH32_CS_LENGTH 6
+#define MIST_BECH32_MIN_LENGTH (MIST_BECH32_MIN_HRP_LENGTH + MIST_BECH32_SEPERATOR_LENGTH + MIST_BECH32_MIN_DATA_LENGTH + MIST_BECH32_CS_LENGTH)
+#define MIST_BECH32_MAX_LENGTH 90
+
 #define MIST_ED25519_PK_SIZE crypto_sign_ed25519_PUBLICKEYBYTES
 #define MIST_ED25519_SK_SIZE crypto_sign_ed25519_SECRETKEYBYTES
 

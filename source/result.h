@@ -14,15 +14,15 @@ typedef enum {
 
     invalid_wordlist,
 
-    bech32m_encoding_error,
-    bech32m_decoding_error,
-    bech32m_invalid,
+    bech32_encoding_error,
+    bech32_decoding_error,
 
     incorrect_signature,
 
     invalid_subkey_algorithm,
 
     malformed_contact_block,
+    malformed_serialized_data,
 
     key_exchange_error,
     shared_secret_generation_error,

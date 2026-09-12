@@ -86,6 +86,15 @@ result MIST_DESERIALIZE_CONTACT(
     from_OCTET_STRING(&spk_signature, &spk_signature_size, prekey_bundle.spk_signature);
     from_OCTET_STRING(&pqspk_signature, &pqspk_signature_size, prekey_bundle.pqspk_signature);
 
+    if (
+        ik_pk_size != MIST_ED25519_PK_SIZE ||
+        spk_pk_size != MIST_X25519_PK_SIZE ||
+        pqspk_pk_size != MIST_MLKEM768_PK_SIZE ||
+        spk_signature_size != MIST_XEDDSA_SIGNATURE_SIZE ||
+        pqspk_signature_ssize != MIST_XEDDSA_SIGNATURE_SIZE
+    )
+        return malformed_serialized_data;
+
     from_UTF8String(MIST_LABEL_output, NULL, contact->label);
     from_UTF8String(MIST_MEMO_output, NULL, contact->memo);
 

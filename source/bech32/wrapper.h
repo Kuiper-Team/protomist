@@ -1,34 +1,25 @@
-#ifndef dependencies_bech32_wrapper_h
-#define dependencies_bech32_wrapper_h
+#ifndef bech32_wrapper_h
+#define bech32_wrapper_h
 
-#include <stddef.h>
+#include <stddef.h><
 
 #include "../result.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-result MIST_BECH32M_ENCODE(
+result MIST_BECH32_ENCODE(
     char** output,
+    size_t output_size,
 
     const char* hrp,
     const unsigned char* MIST_DECODED,
-    const size_t decoded_size
+    const size_t MIST_DECODED_length
 );
 
-result MIST_BECH32M_DECODE(
+result MIST_BECH32_DECODE(
     unsigned char** output,
+    size_t* output_size,
+    char** MIST_HRP_output,
 
     const char* MIST_ENCODED
 );
-
-result MIST_BECH32M_VALIDATE(
-    const char* MIST_ENCODED
-);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
