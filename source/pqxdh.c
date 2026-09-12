@@ -196,7 +196,7 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
 }
 
 result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY( //WIP
-    unsigned char* MIST_CIPHERTEXT_output, //crypto_kem_mlkem768_CIPHERTEXTBYTES
+    unsigned char* MIST_CIPHERTEXT_output, //MIST_MLKEM768_CT_SIZE
     unsigned char* MIST_SHARED_KEY_output, //MIST_SUBKEY_SEED_SIZE
 
     const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
@@ -215,7 +215,7 @@ result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY( //WIP
     if (identifier_result != success)
         return identifier_result;
 
-    unsigned char shared_secret[crypto_kem_mlkem768_SHAREDSECRETBYTES];
+    unsigned char shared_secret[MIST_MLKEM768_SS_SIZE];
     if (crypto_kem_mlkem768_enc(
         MIST_CIPHERTEXT_output,
         shared_secret,

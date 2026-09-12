@@ -1,6 +1,5 @@
 #include "encoder.h"
 
-#include <sodium.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -67,9 +66,9 @@ result MIST_SERIALIZE_CONTACT(
     Contact_t contact = {0};
 
     Recipient_Prekey_Bundle_t prekey_bundle = {0};
-    prekey_bundle.identity_pk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_IK_PK, crypto_sign_ed25519_PUBLICKEYBYTES);
-    prekey_bundle.pqspk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_PK, crypto_box_PUBLICKEYBYTES);
-    prekey_bundle.spk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK, crypto_kem_mlkem768_PUBLICKEYBYTES);
+    prekey_bundle.identity_pk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_IK_PK, MIST_ED25519_PK_SIZE);
+    prekey_bundle.pqspk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_PK, MIST_X25519_PK_SIZE);
+    prekey_bundle.spk = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_PQSPK_PK, MIST_MLKEM768_PK_SIZE);
     prekey_bundle.spk_identifier = to_UTF8String(MIST_PREKEY_BUNDLE->MIST_SPK_IDENTIFIER);
     prekey_bundle.pqspk_identifier = to_UTF8String(MIST_PREKEY_BUNDLE->MIST_PQSPK_IDENTIFIER);
     prekey_bundle.spk_signature = to_OCTET_STRING(MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE, MIST_XEDDSA_SIGNATURE_SIZE);

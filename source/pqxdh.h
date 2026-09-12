@@ -7,22 +7,22 @@
 #include "result.h"
 
 struct initiator_prekey_bundle {
-    unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES];
+    unsigned char MIST_IK_PK[MIST_ED25519_PK_SIZE];
 
-    unsigned char MIST_EK_PK[crypto_box_PUBLICKEYBYTES];
+    unsigned char MIST_EK_PK[MIST_X25519_PK_SIZE];
 };
 
 struct initiator_prekey_secrets {
-    unsigned char MIST_IK_SK[crypto_sign_ed25519_SECRETKEYBYTES];
+    unsigned char MIST_IK_SK[MIST_ED25519_SK_SIZE];
 
-    unsigned char MIST_EK_SK[crypto_box_SECRETKEYBYTES];
+    unsigned char MIST_EK_SK[MIST_X25519_SK_SIZE];
 };
 
 struct recipient_prekey_bundle {
-    unsigned char MIST_IK_PK[crypto_sign_ed25519_PUBLICKEYBYTES];
+    unsigned char MIST_IK_PK[MIST_ED25519_PK_SIZE];
 
-    unsigned char MIST_SPK_PK[crypto_box_PUBLICKEYBYTES];
-    unsigned char MIST_PQSPK_PK[crypto_kem_mlkem768_PUBLICKEYBYTES];
+    unsigned char MIST_SPK_PK[MIST_X25519_PK_SIZE];
+    unsigned char MIST_PQSPK_PK[MIST_MLKEM768_PK_SIZE];
 
     char* MIST_SPK_IDENTIFIER;
     char* MIST_PQSPK_IDENTIFIER;
@@ -32,10 +32,10 @@ struct recipient_prekey_bundle {
 };
 
 struct recipient_prekey_secrets {
-    unsigned char MIST_IK_SK[crypto_sign_ed25519_SECRETKEYBYTES];
+    unsigned char MIST_IK_SK[MIST_ED25519_SK_SIZE];
 
-    unsigned char MIST_SPK_SK[crypto_box_SECRETKEYBYTES];
-    unsigned char MIST_PQSPK_SK[crypto_kem_mlkem768_SECRETKEYBYTES];
+    unsigned char MIST_SPK_SK[MIST_X25519_SK_SIZE];
+    unsigned char MIST_PQSPK_SK[MIST_MLKEM768_SK_SIZE];
 };
 
 result MIST_ROTATE_INITIATOR_EK(
