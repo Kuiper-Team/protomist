@@ -1,7 +1,7 @@
 #ifndef bech32_wrapper_h
 #define bech32_wrapper_h
 
-#include <stddef.h><
+#include <stddef.h>
 
 #include "../result.h"
 
