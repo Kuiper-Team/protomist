@@ -5,7 +5,7 @@
 
 #include "../result.h"
 
-result MIST_BECH32_ENCODE(
+result MIST_BECH32M_ENCODE(
     char** output,
     size_t output_size,
 
@@ -14,7 +14,7 @@ result MIST_BECH32_ENCODE(
     const size_t MIST_DECODED_length
 );
 
-result MIST_BECH32_DECODE(
+result MIST_BECH32M_DECODE(
     unsigned char** output,
     size_t* output_size,
     char** MIST_HRP_output,

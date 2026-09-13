@@ -8,7 +8,7 @@
 #include "../result.h"
 #include "ref.h"
 
-result MIST_BECH32_ENCODE(
+result MIST_BECH32M_ENCODE(
     char** output, //Don't forget to free().
     size_t* output_size,
 
@@ -35,9 +35,9 @@ result MIST_BECH32_ENCODE(
     if (*output == NULL)
         return out_of_memory;
 
-    int encoding_result = bech32_encode(*output, hrp, converted, sizeof(converted), BECH32_ENCODING_BECH32);
+    int encoding_result = bech32_encode(*output, hrp, converted, sizeof(converted), BECH32_ENCODING_BECH32M);
     if (encoding_result != 1)
-        return bech32_encoding_error;
+        return bech32m_encoding_error;
 
     if (output_size != NULL)
         *output_size = encoded_size;
@@ -45,7 +45,7 @@ result MIST_BECH32_ENCODE(
     return success;
 }
 
-result MIST_BECH32_DECODE(
+result MIST_BECH32M_DECODE(
     unsigned char** output, //Don't forget to free().
     size_t* output_size,
     char** MIST_HRP_output, //MIST_BECH32_MAX_HRP_LENGTH + 1
@@ -54,15 +54,15 @@ result MIST_BECH32_DECODE(
 ) {
     const size_t encoded_length = strlen(MIST_ENCODED);
     if (encoded_length < MIST_BECH32_MIN_LENGTH || encoded_length > MIST_BECH32_MAX_LENGTH)
-        return bech32_decoding_error;
+        return bech32m_decoding_error;
 
     const size_t decoded_max_size = encoded_length - MIST_BECH32_MIN_HRP_LENGTH - MIST_BECH32_SEPERATOR_LENGTH - MIST_BECH32_CS_LENGTH;
     uint8_t decoded[decoded_max_size];
     size_t decoded_size = 0;
 
     int decoding_result = bech32_decode(*MIST_HRP_output, decoded, &decoded_size, MIST_ENCODED);
-    if (decoding_result == BECH32_ENCODING_NONE || decoded_size > decoded_max_size)
-        return bech32_decoding_error;
+    if (decoding_result == BECH32_ENCODING_NONE || decoded_size > decoded_max_size || decoding_result == BECH32_ENCODING_BECH32)
+        return bech32m_decoding_error;
 
     const size_t converted_max_size = (decoded_size * 5 + 7) / 8;
     uint8_t converted[converted_max_size];
@@ -77,7 +77,7 @@ result MIST_BECH32_DECODE(
         5,
         0
     ) || converted_size > converted_max_size)
-        return bech32_decoding_error;
+        return bech32m_decoding_error;
 
     *output = malloc(converted_size * sizeof(uint8_t));
     if (*output == NULL)
