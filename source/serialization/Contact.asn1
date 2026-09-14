@@ -1,7 +1,10 @@
+-- Schema ID: 1
 Contact-Module DEFINITIONS ::= BEGIN
     IMPORTS Recipient-Prekey-Bundle FROM Recipient-Prekey-Bundle-Module;
 
     Contact ::= SEQUENCE {
+        schema INTEGER,
+
         label UTF8String,
         memo UTF8String,
         prekey-bundle Recipient-Prekey-Bundle

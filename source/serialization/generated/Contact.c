@@ -8,6 +8,15 @@
 #include "Contact.h"
 
 static asn_TYPE_member_t asn_MBR_Contact_1[] = {
+	{ ATF_NOFLAGS, 0, offsetof(struct Contact, schema),
+		(ASN_TAG_CLASS_UNIVERSAL | (2 << 2)),
+		0,
+		&asn_DEF_NativeInteger,
+		0,
+		{ 0, 0, 0 },
+		0, 0, /* No default value */
+		"schema"
+		},
 	{ ATF_NOFLAGS, 0, offsetof(struct Contact, label),
 		(ASN_TAG_CLASS_UNIVERSAL | (12 << 2)),
 		0,
@@ -40,15 +49,16 @@ static const ber_tlv_tag_t asn_DEF_Contact_tags_1[] = {
 	(ASN_TAG_CLASS_UNIVERSAL | (16 << 2))
 };
 static const asn_TYPE_tag2member_t asn_MAP_Contact_tag2el_1[] = {
-    { (ASN_TAG_CLASS_UNIVERSAL | (12 << 2)), 0, 0, 1 }, /* label */
-    { (ASN_TAG_CLASS_UNIVERSAL | (12 << 2)), 1, -1, 0 }, /* memo */
-    { (ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 2, 0, 0 } /* prekey-bundle */
+    { (ASN_TAG_CLASS_UNIVERSAL | (2 << 2)), 0, 0, 0 }, /* schema */
+    { (ASN_TAG_CLASS_UNIVERSAL | (12 << 2)), 1, 0, 1 }, /* label */
+    { (ASN_TAG_CLASS_UNIVERSAL | (12 << 2)), 2, -1, 0 }, /* memo */
+    { (ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 3, 0, 0 } /* prekey-bundle */
 };
 static asn_SEQUENCE_specifics_t asn_SPC_Contact_specs_1 = {
 	sizeof(struct Contact),
 	offsetof(struct Contact, _asn_ctx),
 	asn_MAP_Contact_tag2el_1,
-	3,	/* Count of tags in the map */
+	4,	/* Count of tags in the map */
 	0, 0, 0,	/* Optional elements (not needed) */
 	-1,	/* First extension addition */
 };
@@ -64,7 +74,7 @@ asn_TYPE_descriptor_t asn_DEF_Contact = {
 		/sizeof(asn_DEF_Contact_tags_1[0]), /* 1 */
 	{ 0, 0, SEQUENCE_constraint },
 	asn_MBR_Contact_1,
-	3,	/* Elements count */
+	4,	/* Elements count */
 	&asn_SPC_Contact_specs_1	/* Additional specs */
 };
 

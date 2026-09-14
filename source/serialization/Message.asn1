@@ -1,3 +1,4 @@
+-- Schema ID: 2
 Message-Module DEFINITIONS ::= BEGIN
     Flag ::= ENUMERATED {
         message (0),
@@ -13,8 +14,9 @@ Message-Module DEFINITIONS ::= BEGIN
     }
 
     Message ::= SEQUENCE {
+        schema INTEGER,
+
         header Message-Header,
-        
         body UTF8String
     }
 END

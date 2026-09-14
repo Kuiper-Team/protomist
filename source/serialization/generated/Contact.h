@@ -12,6 +12,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include <NativeInteger.h>
 #include <UTF8String.h>
 #include "Recipient-Prekey-Bundle.h"
 #include <constr_SEQUENCE.h>
@@ -22,6 +23,7 @@ extern "C" {
 
 /* Contact */
 typedef struct Contact {
+	long	 schema;
 	UTF8String_t	 label;
 	UTF8String_t	 memo;
 	Recipient_Prekey_Bundle_t	 prekey_bundle;
