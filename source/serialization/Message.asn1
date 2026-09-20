@@ -14,6 +14,7 @@ Message-Module DEFINITIONS ::= BEGIN
     }
 
     Message ::= SEQUENCE {
+        version INTEGER,
         schema INTEGER,
 
         header Message-Header,

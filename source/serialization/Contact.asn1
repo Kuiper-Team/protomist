@@ -3,6 +3,7 @@ Contact-Module DEFINITIONS ::= BEGIN
     IMPORTS Recipient-Prekey-Bundle FROM Recipient-Prekey-Bundle-Module;
 
     Contact ::= SEQUENCE {
+        version INTEGER,
         schema INTEGER,
 
         label UTF8String,

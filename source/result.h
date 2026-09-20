@@ -19,7 +19,7 @@ typedef enum {
 
     incorrect_signature,
 
-    invalid_subkey_algorithm,
+    invalid_subkey_type,
 
     malformed_contact_block,
     malformed_serialized_data,

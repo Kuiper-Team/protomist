@@ -1,7 +1,6 @@
 #ifndef helpers_h
 #define helpers_h
 
-#include <math.h>
 #include <stddef.h>
 
 void concatenate_bytes(

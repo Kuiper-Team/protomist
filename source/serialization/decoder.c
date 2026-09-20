@@ -51,6 +51,29 @@ static result from_UTF8String(
     return success;
 }
 
+static result decode_using_oer(
+    unsigned char** output,
+
+    const asn_TYPE_descriptor_t* type_descriptor,
+    const void* encoded,
+    const size_t encoded_size
+) {
+    asn_dec_rval_t decoding_result = asn_decode(
+        0,
+        &asn_OER_Contact,
+        (void**) &contact,
+        encoded,
+        encoded_size
+    );
+    if (decoding_result.code != RC_OK) {
+        ASN_STRUCT_FREE(&asn_OER_Contact, contact);
+
+        return deserialization_error;
+    }
+
+    return success;
+}
+
 result MIST_DESERIALIZE_CONTACT(
     char** MIST_LABEL_output,
     char** MIST_MEMO_output,
@@ -61,15 +84,18 @@ result MIST_DESERIALIZE_CONTACT(
 ) {
     Contact_t* contact = {0};
 
-    asn_dec_rval_t decoding_result = ber_decode(
+    asn_dec_rval_t decoding_result = asn_decode(
         0,
-        &asn_DEF_Contact,
+        &asn_OER_Contact,
         (void**) &contact,
         MIST_ENCODED,
         MIST_ENCODED_size
     );
-    if (decoding_result.code != RC_OK)
+    if (decoding_result.code != RC_OK) {
+        ASN_STRUCT_FREE(&asn_OER_Contact, contact);
+
         return deserialization_error;
+    }
 
     unsigned char *ik_pk, *spk_pk, *pqspk_pk, *spk_signature, *pqspk_signature;
     char *spk_identifier, *pqspk_identifier;

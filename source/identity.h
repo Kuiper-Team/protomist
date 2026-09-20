@@ -1,68 +1,51 @@
 #ifndef identities_h
 #define identities_h
 
-#include "constants.h"
-#include "result.h"
-#include "wordlists/apply.h"
-
 #include <stddef.h>
 
-result MIST_GENERATE_MNEMONIC_SENTENCE(
-    char** output,
+#include "constants.h"
+#include "result.h"
 
-    const char* const* list_pointer 
+typedef struct {
+    unsigned char public_key[MIST_ED25519_PK_SIZE],
+    unsigned char secret_key[MIST_ED25519_SK_SIZE]
+} mist_identity_subkey_signing;
+
+typedef struct {
+    unsigned char public_key[MIST_X25519_PK_SIZE],
+    unsigned char secret_key[MIST_X25519_SK_SIZE]
+} mist_identity_subkey_encryption;
+
+typedef struct {
+    unsigned char key[MIST_XCHACHA20_POLY1305_KEY_SIZE],
+    unsigned char nonce[MIST_XCHACHA20_POLY1305_NONCE_SIZE]
+} mist_identity_subkey_symmetric_encryption;
+
+typedef struct {
+    unsigned char public_key[MIST_MLKEM768_PK_SIZE],
+    unsigned char secret_key[MIST_MLKEM768_SK_SIZE]
+} mist_identity_subkey_key_encapsulation;
+
+typedef mist_identity_subkey_signing mist_identity;
+
+result mist_identity_subkey_generate_signing(
+    mist_identity_subkey_signing* output
 );
 
-result MIST_JOIN_MNEMONIC_SENTENCE(
-    char** output,
-    size_t output_length,
-
-    char** MIST_MNEMONIC_SENTENCE
+result mist_identity_subkey_generate_encryption(
+    mist_identity_subkey_encryption* output
 );
 
-result MIST_GENERATE_SEED(
-    unsigned char* output,
-    const size_t output_size,
-
-    char** MIST_SEED_MNEMONIC_SENTENCE
+result mist_identity_subkey_generate_symmetric_encryption(
+    mist_identity_subkey_symmetric_encryption* output
 );
 
-result MIST_ENCRYPT_SEED(
-    unsigned char** output,
-    unsigned long long output_length,
-    unsigned char** MIST_NONCE_OUTPUT,
-    unsigned char** MIST_SALT_OUTPUT,
-
-    const unsigned char* MIST_SEED,
-    const char* MIST_PASSPHRASE,
-    const size_t passphrase_length
-);
-result MIST_DECRYPT_SEED(
-    unsigned char** output,
-    unsigned long long output_length,
-
-    const unsigned char* MIST_NONCE,
-    const unsigned char* MIST_SALT,
-    const unsigned char* MIST_CIPHERTEXT,
-    const long long ciphertext_length,
-    const char* MIST_PASSPHRASE,
-    const size_t passphrase_length
+result mist_identity_subkey_generate_key_encapsulation(
+    mist_identity_subkey_key_encapsulation* output
 );
 
-result MIST_RESTORE_IDENTITY(
-    char** MIST_ADDRESS_output,
-    unsigned char* MIST_IDENTITY_PK_output,
-    unsigned char* MIST_IDENTITY_SK_output,
-
-    const unsigned char* MIST_SEED
+result mist_identity_generate(
+    mist_identity* output
 );
 
-result MIST_GENERATE_SUBKEY(
-    unsigned char* MIST_SUB_PK_output,
-    unsigned char* MIST_SUB_SK_output,
-
-    const unsigned char* MIST_SEED,
-    const char* MIST_CONTEXT,
-    const subkey_algorithm MIST_ALGORITHM
-);
 #endif

@@ -3,6 +3,6 @@
 
 #include "result.h"
 
-result initialize_protomist();
+result mist_initialize();
 
 #endif

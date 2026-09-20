@@ -1,3 +1,5 @@
+//To-do: Refine and use functions from identity.h.
+
 #include "pqxdh.h"
 
 #include <math.h>

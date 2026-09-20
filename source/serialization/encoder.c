@@ -33,7 +33,7 @@ static UTF8String_t to_UTF8String(
     return output;
 }
 
-static result encode_using_der(
+static result encode_using_oer(
     unsigned char** output,
     size_t* output_size,
 
@@ -42,7 +42,7 @@ static result encode_using_der(
 ) {
     asn_encode_to_new_buffer_result_t encoded = asn_encode_to_new_buffer(
         0,
-        ATS_DER,
+        ATS_OER,
         type_descriptor,
         form
     );
@@ -78,7 +78,7 @@ result MIST_SERIALIZE_CONTACT(
     contact.memo = to_UTF8String(MIST_MEMO);
     contact.prekey_bundle = prekey_bundle;
 
-    result encoding_result = encode_using_der(
+    result encoding_result = encode_using_oer(
         output,
         output_size,
         &asn_DEF_Contact,
