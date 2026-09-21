@@ -1,5 +1,5 @@
-#ifndef contacts_h
-#define contacts_h
+#ifndef contact_h
+#define contact_h
 
 #include "pqxdh.h"
 

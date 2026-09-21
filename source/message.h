@@ -1,5 +1,5 @@
-#ifndef messages_h
-#define messages_h
+#ifndef message_h
+#define message_h
 
 #include "pqxdh.h"
 #include "result.h"
