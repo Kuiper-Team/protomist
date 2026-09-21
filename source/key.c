@@ -14,16 +14,16 @@ result mist_key_signing_generate(
     return success;
 }
 
-result mist_key_encryption_generate(
-    mist_key_encryption* output
+result mist_key_agreement_generate(
+    mist_key_agreement* output
 ) {
     crypto_box_keypair(output->public_key, output->secret_key);
 
     return success;
 }
 
-result mist_key_symmetric_encryption_generate(
-    mist_key_symmetric_encryption* output
+result mist_key_encryption_generate(
+    mist_key_encryption* output
 ) {
     crypto_aead_xchacha20poly1305_ietf_keygen(output->key);
     randombytes_buf(output->nonce, sizeof(output->nonce));

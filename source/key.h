@@ -11,12 +11,12 @@ typedef struct {
 typedef struct {
     unsigned char public_key[MIST_X25519_PK_SIZE];
     unsigned char secret_key[MIST_X25519_SK_SIZE];
-} mist_key_encryption;
+} mist_key_key_agreement;
 
 typedef struct {
     unsigned char key[MIST_XCHACHA20_POLY1305_KEY_SIZE];
     unsigned char nonce[MIST_XCHACHA20_POLY1305_NONCE_SIZE];
-} mist_key_symmetric_encryption;
+} mist_key_encryption;
 
 typedef struct {
     unsigned char public_key[MIST_MLKEM768_PK_SIZE];
@@ -27,12 +27,12 @@ result mist_key_signing_generate(
     mist_key_signing* output
 );
 
-result mist_key_encryption_generate(
-    mist_key_encryption* output
+result mist_key_key_agreement_generate(
+    mist_key_key_agreement* output
 );
 
-result mist_key_symmetric_encryption_generate(
-    mist_key_symmetric_encryption* output
+result mist_key_encryption_generate(
+    mist_key_encryption* output
 );
 
 result mist_key_key_encapsulation_generate(

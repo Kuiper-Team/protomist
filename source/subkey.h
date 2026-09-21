@@ -13,14 +13,14 @@ typedef struct {
 } mist_subkey_signing;
 
 typedef struct {
+    mist_key_key_agreement* key;
+    uint32_t identifier;
+} mist_subkey_key_agreement;
+
+typedef struct {
     mist_key_encryption* key;
     uint32_t identifier;
 } mist_subkey_encryption;
-
-typedef struct {
-    mist_key_symmetric_encryption* key;
-    uint32_t identifier;
-} mist_subkey_symmetric_encryption;
 
 typedef struct {
     mist_key_key_encapsulation* key;
@@ -33,14 +33,14 @@ result mist_subkey_signing_encryption(
     const uint32_t identifier
 );
 
-result mist_subkey_encryption_generate(
-    mist_subkey_encryption* output,
+result mist_subkey_key_agreement_generate(
+    mist_subkey_key_agreement* output,
 
     const uint32_t identifier
 );
 
-result mist_subkey_symmetric_encryption_generate(
-    mist_subkey_symmetric_encryption* output,
+result mist_subkey_encryption_generate(
+    mist_subkey_encryption* output,
 
     const uint32_t identifier
 );
