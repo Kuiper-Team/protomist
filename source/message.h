@@ -4,11 +4,11 @@
 #include "pqxdh.h"
 #include "result.h"
 
-result MIST_SERIALIZE_INITIAL_PAYLOAD(
+result mist_message_pqxdh_initial_generate(
     unsigned char* output,
 
-    const struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
-    const unsigned char* MIST_CIPHERTEXT
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 );
 
 #endif

@@ -1,4 +1,4 @@
-//To-do: Refine and use functions from identity.h.
+//To-do: Update here according to pqxdh.h
 
 #include "pqxdh.h"
 

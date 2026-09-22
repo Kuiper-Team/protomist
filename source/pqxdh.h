@@ -4,91 +4,76 @@
 #include <sodium.h>
 
 #include "constants.h"
+#include "identity.h"
 #include "result.h"
+#include "subkey.h"
 
-struct initiator_prekey_bundle {
-    unsigned char MIST_IK_PK[MIST_ED25519_PK_SIZE];
+struct mist_pqxdh_initiator_prekeys {
+    mist_identity identity;
 
-    unsigned char MIST_EK_PK[MIST_X25519_PK_SIZE];
+    mist_subkey_key_agreement ek;
 };
 
-struct initiator_prekey_secrets {
-    unsigned char MIST_IK_SK[MIST_ED25519_SK_SIZE];
+struct mist_pqxdh_recipient_prekeys {
+    mist_identity identity;
 
-    unsigned char MIST_EK_SK[MIST_X25519_SK_SIZE];
+    mist_subkey_key_agreement spk;
+    mist_subkey_key_encapsulation pqspk;
+
+    unsigned char spk_signature[MIST_XEDDSA_SIGNATURE_SIZE];
+    unsigned char pqspk_signature[MIST_XEDDSA_SIGNATURE_SIZE];
 };
 
-struct recipient_prekey_bundle {
-    unsigned char MIST_IK_PK[MIST_ED25519_PK_SIZE];
+result mist_pqxdh_initiator_prekeys_ek_rotate(
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
 
-    unsigned char MIST_SPK_PK[MIST_X25519_PK_SIZE];
-    unsigned char MIST_PQSPK_PK[MIST_MLKEM768_PK_SIZE];
-
-    char* MIST_SPK_IDENTIFIER;
-    char* MIST_PQSPK_IDENTIFIER;
-
-    unsigned char MIST_SPK_SIGNATURE[MIST_XEDDSA_SIGNATURE_SIZE];
-    unsigned char MIST_PQSPK_SIGNATURE[MIST_XEDDSA_SIGNATURE_SIZE];
-};
-
-struct recipient_prekey_secrets {
-    unsigned char MIST_IK_SK[MIST_ED25519_SK_SIZE];
-
-    unsigned char MIST_SPK_SK[MIST_X25519_SK_SIZE];
-    unsigned char MIST_PQSPK_SK[MIST_MLKEM768_SK_SIZE];
-};
-
-result MIST_ROTATE_INITIATOR_EK(
-    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+    const uint32_t identifier
 );
 
-result MIST_ROTATE_RECIPIENT_SPK(
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+result mist_pqxdh_recipient_prekeys_spk_rotate(
+    mist_pqxdh_recipient_prekeys recipient_prekeys,
+
+    const uint32_t identifier
 );
 
-result MIST_ROTATE_RECIPIENT_PQSPK(
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+result mist_pqxdh_recipient_prekeys_pqspk_rotate(
+    mist_pqxdh_recipient_prekeys recipient_prekeys,
+
+    const uint32_t identifier
 );
 
-result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
-    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
+result mist_pqxdh_initiator_prekeys_generate(
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
 
-    const unsigned char* MIST_INITIATOR_IK_PK,
-    const unsigned char* MIST_INITIATOR_IK_SK
+    mist_identity identity,
+    const uint32_t ek_identifier
 );
 
-result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE(
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS_output,
+result mist_pqxdh_recipient_prekeys_generate(
+    mist_pqxdh_recipient_prekeys recipient_prekeys,
 
-    const unsigned char* MIST_RECIPIENT_IK_PK,
-    const unsigned char* MIST_RECIPIENT_IK_SK,
-    const size_t MIST_IDENTIFIER_NUMBER
+    mist_identity identity,
+    const uint32_t spk_identifier,
+    const uint32_t pqspk_identifier
 );
 
-result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE(
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+result mist_pqxdh_recipient_prekeys_verify(
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 );
 
-result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY(
-    unsigned char* MIST_CIPHERTEXT_output,
-    unsigned char* MIST_SHARED_KEY_output,
+result mist_pqxdh_shared_key(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_key_output,
 
-    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
-    const struct initiator_prekey_secrets* MIST_INITIATOR_PREKEY_SECRETS,
-    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE,
-    const size_t MIST_IDENTIFIER_NUMBER
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 );
 
-result MIST_CALCULATE_ASSOCIATED_DATA(
+result mist_pqxdh_associated_data(
     unsigned char* output,
 
-    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
-    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 );
 
 #endif
