@@ -40,7 +40,7 @@ result mist_key_key_encapsulation_generate(
 );
 
 result mist_key_signing_sign(
-    char* output,
+    unsigned char* output,
 
     const mist_key_signing signer,
     const unsigned char* input,

@@ -13,7 +13,7 @@ result mist_subkey_signing_encryption(
 ) {
     *output = {0};
     mist_key_signing_generate(output->key);
-    output.identifier = identifier;
+    output->identifier = identifier;
 
     return success;
 }
@@ -25,7 +25,7 @@ result mist_subkey_key_agreement_generate(
 ) {
     *output = {0};
     mist_key_key_agreement_generate(output->key);
-    output.identifier = identifier;
+    output->identifier = identifier;
 
     return success;
 }
@@ -37,7 +37,7 @@ result mist_subkey_encryption_generate(
 ) {
     *output = {0};
     mist_key_encryption_generate(output->key);
-    output.identifier = identifier;
+    output->identifier = identifier;
 
     return success;
 }
@@ -49,7 +49,7 @@ result mist_subkey_key_encapsulation_generate(
 ) {
     *output = {0};
     mist_key_key_encapsulation_generate(output->key);
-    output.identifier = identifier;
+    output->identifier = identifier;
 
     return success;
 }

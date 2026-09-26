@@ -25,32 +25,32 @@ struct mist_pqxdh_recipient_prekeys {
 };
 
 result mist_pqxdh_initiator_prekeys_ek_rotate(
-    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_initiator_prekeys* initiator_prekeys,
 
     const uint32_t identifier
 );
 
 result mist_pqxdh_recipient_prekeys_spk_rotate(
-    mist_pqxdh_recipient_prekeys recipient_prekeys,
+    mist_pqxdh_recipient_prekeys* recipient_prekeys,
 
     const uint32_t identifier
 );
 
 result mist_pqxdh_recipient_prekeys_pqspk_rotate(
-    mist_pqxdh_recipient_prekeys recipient_prekeys,
+    mist_pqxdh_recipient_prekeys* recipient_prekeys,
 
     const uint32_t identifier
 );
 
 result mist_pqxdh_initiator_prekeys_generate(
-    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_initiator_prekeys* initiator_prekeys,
 
     mist_identity identity,
     const uint32_t ek_identifier
 );
 
 result mist_pqxdh_recipient_prekeys_generate(
-    mist_pqxdh_recipient_prekeys recipient_prekeys,
+    mist_pqxdh_recipient_prekeys* recipient_prekeys,
 
     mist_identity identity,
     const uint32_t spk_identifier,
@@ -58,7 +58,7 @@ result mist_pqxdh_recipient_prekeys_generate(
 );
 
 result mist_pqxdh_recipient_prekeys_verify(
-    mist_pqxdh_recipient_prekeys recipient_prekeys
+    mist_pqxdh_recipient_prekeys* recipient_prekeys
 );
 
 result mist_pqxdh_shared_key(

@@ -1,5 +1,3 @@
-//To-do: Update here according to pqxdh.h
-
 #include "pqxdh.h"
 
 #include <math.h>
@@ -10,145 +8,79 @@
 #include <xeddsa.h>
 
 #include "constants.h"
-#include "helpers.h"
 #include "identity.h"
 
-static result generate_identifier(
-    char** output,
-    size_t* size_output, //Pass NULL if not needed.
+result mist_pqxdh_initiator_prekeys_ek_rotate(
+    mist_pqxdh_initiator_prekeys* initiator_prekeys,
 
-    const char* prefix,
-    const size_t number
-) { //Don't forget to free() output!
-    const size_t number_digits = (size_t) count_digits((unsigned int) number); 
-    const size_t size = strlen(prefix) + number_digits + 1;
-    if (size_output != NULL)
-        *size_output = size;
-
-    char number_string[number_digits + 1];
-    snprintf( //Inefficient
-        number_string,
-        sizeof(number_string),
-        "%zu", //Format specifier to handle size_t
-        number
-    );
-
-    *output = (char*) malloc(size * sizeof(**output));
-    if (*output == NULL)
-        return out_of_memory;   
-
-    strcpy(*output, prefix);
-    strcat(*output, number_string);
-
-    return success;
-}
-
-result MIST_ROTATE_INITIATOR_EK(
-    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS
+    const uint32_t identifier
 ) {
-    crypto_box_keypair(
-        MIST_PREKEY_BUNDLE->MIST_EK_PK,
-        MIST_PREKEY_SECRETS->MIST_EK_SK
-    );
-    //To-do: Update signatures and identifiers.
+    mist_subkey_key_agreement_generate(initiator_prekeys->ek, identifier);
 
     return success;
 }
 
-result MIST_ROTATE_RECIPIENT_SPK(
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+result mist_pqxdh_recipient_prekeys_spk_rotate(
+    mist_pqxdh_recipient_prekeys* recipient_prekeys,
+
+    const uint32_t identifier
 ) {
-    crypto_box_keypair(
-        MIST_PREKEY_BUNDLE->MIST_SPK_PK,
-        MIST_PREKEY_SECRETS->MIST_SPK_SK
+    mist_subkey_key_agreement_generate(initiator_prekeys->spk, identifier);
+    mist_key_signing_sign(
+        initiator_prekeys->spk_signature,
+        initiator_prekeys->identity.key,
+        initiator_prekeys->spk.public_key,
+        sizeof(initiator_prekeys->spk.public_key),
     );
-    //To-do: Update signatures and identifiers.
 
     return success;
 }
 
-result MIST_ROTATE_RECIPIENT_PQSPK(
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS
+result mist_pqxdh_recipient_prekeys_pqspk_rotate(
+    mist_pqxdh_recipient_prekeys* recipient_prekeys,
+
+    const uint32_t identifier
 ) {
-    crypto_kem_mlkem768_keypair(
-        MIST_PREKEY_BUNDLE->MIST_PQSPK_PK,
-        MIST_PREKEY_SECRETS->MIST_PQSPK_SK
+    crypto_subkey_key_encapsulation_generate(recipient_prekeys->pqspk, identifier);
+    mist_key_signing_sign(
+        initiator_prekeys->spk_signature,
+        initiator_prekeys->identity.key,
+        initiator_prekeys->spk.public_key,
+        sizeof(initiator_prekeys->spk.public_key),
     );
 
     return success;
 }
 
-result MIST_GENERATE_INITIATOR_PREKEY_BUNDLE(
-    struct initiator_prekey_bundle* MIST_PREKEY_BUNDLE_output,
-    struct initiator_prekey_secrets* MIST_PREKEY_SECRETS_output,
+result mist_pqxdh_initiator_prekeys_generate(
+    mist_pqxdh_initiator_prekeys* initiator_prekeys,
 
-    const unsigned char* MIST_INITIATOR_IK_PK,
-    const unsigned char* MIST_INITIATOR_IK_SK
+    mist_identity identity,
+    const uint32_t ek_identifier
 ) {
-    //The sizes must be appropriate.
-    memcpy(
-        MIST_PREKEY_BUNDLE_output->MIST_IK_PK,
-        MIST_INITIATOR_IK_PK,
-        crypto_sign_ed25519_PUBLICKEYBYTES
-    );
-    memcpy(
-        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
-        MIST_INITIATOR_IK_SK,
-        crypto_sign_ed25519_SECRETKEYBYTES
-    );
+    *initiator_prekeys = (mist_pqxdh_initiator_prekeys) {0};
+    initiator_prekeys->identity = identity;
 
-    MIST_ROTATE_INITIATOR_EK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
+    mist_pqxdh_initiator_prekeys_ek_rotate(initiator_prekeys, identifier);
 
     return success;
 }
 
-result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
-    struct recipient_prekey_secrets* MIST_PREKEY_SECRETS_output,
+result mist_pqxdh_recipient_prekeys_generate(
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 
-    const unsigned char* MIST_RECIPIENT_IK_PK,
-    const unsigned char* MIST_RECIPIENT_IK_SK,
-    const size_t MIST_IDENTIFIER_NUMBER
-) { //Don't forget to free() output->MIST_SPK_IDENTIFIER!
-    //The sizes must be appropriate.
-    memcpy(
-        MIST_PREKEY_BUNDLE_output->MIST_IK_PK,
-        MIST_RECIPIENT_IK_PK,
-        crypto_sign_ed25519_PUBLICKEYBYTES
-    );
-    memcpy(
-        MIST_PREKEY_SECRETS_output->MIST_IK_SK,
-        MIST_RECIPIENT_IK_SK,
-        crypto_sign_ed25519_SECRETKEYBYTES
-    );
+    mist_identity identity,
+    const uint32_t spk_identifier,
+    const uint32_t pqspk_identifier
+) {
+    *recipient_prekeys = (mist_pqxdh_recipient_prekeys) {0};
+    recipient_prekeys->identity = identity;
 
-    result identifier_result;
+    mist_pqxdh_recipient_prekeys_spk_rotate(recipient_prekeys, identifier);
+    mist_pqxdh_recipient_prekeys_pqspk_rotate(recipient_prekeys, identifier);
 
-    identifier_result = generate_identifier(
-        &MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER,
-        NULL,
-        MIST_SPK_IDENTIFIER_PREFIX,
-        MIST_IDENTIFIER_NUMBER
-    );
-    if (identifier_result != success)
-        return identifier_result;
-
-    MIST_ROTATE_RECIPIENT_SPK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
-
-    identifier_result = generate_identifier(
-        &MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER,
-        NULL,
-        MIST_PQSPK_IDENTIFIER_PREFIX,
-        MIST_IDENTIFIER_NUMBER
-    );
-    if (identifier_result != success)
-        return identifier_result;
-
-    MIST_ROTATE_RECIPIENT_PQSPK(MIST_PREKEY_BUNDLE_output, MIST_PREKEY_SECRETS_output);
-
+    //TO-DO: Add mist_key_signing_sign_xeddsa and use it for SPK and PQSPK rotation.
+    /*
     unsigned char MIST_Z_SPK[MIST_Z_SIZE];
     unsigned char MIST_Z_PQSPK[MIST_Z_SIZE];
     randombytes_buf(MIST_Z_SPK, sizeof(MIST_Z_SPK));
@@ -171,12 +103,13 @@ result MIST_GENERATE_RECIPIENT_PREKEY_BUNDLE( //WIP
 
     sodium_memzero(MIST_Z_SPK, sizeof(MIST_Z_SPK));
     sodium_memzero(MIST_Z_PQSPK, sizeof(MIST_Z_PQSPK));
+    */
 
     return success;
 }
 
-result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
-    const struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE
+result mist_pqxdh_recipient_prekeys_verify(
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 ) {
     if (ed25519_verify(
         MIST_PREKEY_BUNDLE->MIST_SPK_SIGNATURE,
@@ -197,14 +130,12 @@ result MIST_VERIFY_RECIPIENT_PREKEY_BUNDLE( //WIP
     return success;
 }
 
-result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY( //WIP
-    unsigned char* MIST_CIPHERTEXT_output, //MIST_MLKEM768_CT_SIZE
-    unsigned char* MIST_SHARED_KEY_output, //MIST_SUBKEY_SEED_SIZE
+result mist_pqxdh_shared_key(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_key_output,
 
-    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
-    const struct initiator_prekey_secrets* MIST_INITIATOR_PREKEY_SECRETS,
-    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE,
-    const size_t MIST_IDENTIFIER_NUMBER
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 ) { //Don't forget to free output->MIST_SPK_IDENTIFIER!
     char* identifier;
     size_t identifier_size;
@@ -296,11 +227,11 @@ result MIST_CALCULATE_CIPHERTEXT_AND_SHARED_KEY( //WIP
     return success;
 }
 
-result MIST_CALCULATE_ASSOCIATED_DATA(
+result mist_pqxdh_associated_data(
     unsigned char* output,
 
-    const struct initiator_prekey_bundle* MIST_INITIATOR_PREKEY_BUNDLE,
-    const struct recipient_prekey_bundle* MIST_RECIPIENT_PREKEY_BUNDLE
+    mist_pqxdh_initiator_prekeys initiator_prekeys,
+    mist_pqxdh_recipient_prekeys recipient_prekeys
 ) {
     concatenate_bytes(
         output,

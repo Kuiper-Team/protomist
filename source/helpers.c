@@ -7,12 +7,6 @@
 
 #include "result.h"
 
-unsigned int count_digits(
-    unsigned int number
-) {
-    return number == 0 ? 1 : floor(log10(number)) + 1
-}
-
 void concatenate_bytes(
     unsigned char* destination,
 
