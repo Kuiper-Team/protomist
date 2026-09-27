@@ -8,7 +8,7 @@
 result mist_identity_generate(
     mist_identity* output
 ) {
-    mist_key_signing_generate(output);
+    mist_key_key_agreement_generate(output);
 
     return success;
 }

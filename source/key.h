@@ -53,4 +53,34 @@ result mist_key_signing_verify(
     const size_t signature_size
 );
 
+result mist_key_key_agreement_sign(
+    unsigned char* output,
+
+    const mist_key_key_agreement signer,
+    const unsigned char* input,
+    const size_t input_size,
+    const unsigned char* nonce
+); //Uses XEdDSA to sign.
+
+result mist_key_key_agreement_dh(
+    unsigned char* output,
+
+    const unsigned char* local_secret_key,
+    const unsigned char* remote_public_key
+);
+
+result mist_key_key_encapsulation_encapsulate(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_secret_output,
+
+    mist_key_key_encapsulation key
+);
+
+result mist_key_key_encapsulation_decapsulate(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_secret_output,
+
+    mist_key_key_encapsulation key
+);
+
 #endif

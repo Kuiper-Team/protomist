@@ -2,6 +2,7 @@
 
 #include <sodium.h>
 #include <stddef.h>
+#include <xeddsa.h>
 
 #include "identity.h"
 #include "result.h"
@@ -74,4 +75,67 @@ result mist_key_signing_verify(
         return incorrect_signature;
     else
         return success;
+}
+
+result mist_key_signing_sign_xeddsa(
+    unsigned char* output,
+
+    const mist_key_signing signer,
+    const unsigned char* input,
+    const size_t input_size
+) {
+    unsigned char nonce[MIST_XEDDSA_NONCE_SIZE];
+    randombytes_buf(nonce, sizeof(nonce));
+    ed25519_priv_sign(
+        output,
+        signer.secret_key,
+        input,
+        input_size,
+        nonce
+    );
+
+    sodium_memzero(nonce, sizeof(nonce));
+
+    return success;
+}
+
+result mist_key_key_agreement_dh(
+    unsigned char* output,
+
+    const unsigned char* local_secret_key,
+    const unsigned char* remote_public_key
+) {
+    if (crypto_scalarmult(
+        output,
+        local_secret_key,
+        remote_public_key
+    ) != 0)
+        return key_exchange_error;
+
+    return success;
+}
+
+result mist_key_key_encapsulation_encapsulate(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_secret_output,
+
+    mist_key_key_encapsulation key
+) {
+    if (crypto_kem_mlkem768_enc(
+        ciphertext_output,
+        shared_secret_output,
+        key.public_key
+    ) != 0)
+        return shared_secret_generation_error;
+
+    return success;
+}
+
+result mist_key_key_encapsulation_decapsulate(
+    unsigned char* ciphertext_output,
+    unsigned char* shared_secret_output,
+
+    mist_key_key_encapsulation key
+) {
+    return success;
 }

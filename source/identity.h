@@ -5,7 +5,7 @@
 #include "key.h"
 #include "result.h"
 
-typedef mist_key_signing mist_identity;
+typedef mist_key_key_agreement mist_identity;
 
 result mist_identity_generate(
     mist_identity* output

@@ -66,7 +66,8 @@ result mist_pqxdh_shared_key(
     unsigned char* shared_key_output,
 
     mist_pqxdh_initiator_prekeys initiator_prekeys,
-    mist_pqxdh_recipient_prekeys recipient_prekeys
+    mist_pqxdh_recipient_prekeys recipient_prekeys,
+    const uint32_t identifier
 );
 
 result mist_pqxdh_associated_data(
