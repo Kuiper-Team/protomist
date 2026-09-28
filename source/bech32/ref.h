@@ -31,6 +31,16 @@ typedef enum {
     BECH32_ENCODING_BECH32M
 } bech32_encoding;
 
+int convert_bits(
+    uint8_t* out,
+    size_t* outlen,
+    int outbits,
+    const uint8_t* in,
+    size_t inlen,
+    int inbits,
+    int pad
+);
+
 /** Encode a Bech32 or Bech32m string
  *
  *  Out: output:  Pointer to a buffer of size strlen(hrp) + data_len + 8 that

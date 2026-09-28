@@ -2,6 +2,7 @@
 #define key_h
 
 #include "constants.h"
+#include "result.h"
 
 typedef struct {
     unsigned char public_key[MIST_ED25519_PK_SIZE];
@@ -56,10 +57,9 @@ result mist_key_signing_verify(
 result mist_key_key_agreement_sign(
     unsigned char* output,
 
-    const mist_key_key_agreement signer,
+    const mist_key_signing signer,
     const unsigned char* input,
-    const size_t input_size,
-    const unsigned char* nonce
+    const size_t input_size
 ); //Uses XEdDSA to sign.
 
 result mist_key_key_agreement_dh(

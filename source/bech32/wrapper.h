@@ -5,21 +5,21 @@
 
 #include "../result.h"
 
-result MIST_BECH32M_ENCODE(
+result mist_bech32m_encode(
     char** output,
-    size_t output_size,
+    size_t* output_size,
 
     const char* hrp,
-    const unsigned char* MIST_DECODED,
-    const size_t MIST_DECODED_length
+    const unsigned char* input,
+    const size_t input_length
 );
 
-result MIST_BECH32M_DECODE(
+result mist_bech32m_decode(
     unsigned char** output,
     size_t* output_size,
-    char** MIST_HRP_output,
+    char** hrp_output,
 
-    const char* MIST_ENCODED
+    const char* input
 );
 
 #endif

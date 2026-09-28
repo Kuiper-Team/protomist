@@ -14,8 +14,8 @@ typedef enum {
 
     invalid_wordlist,
 
-    bech32_encoding_error,
-    bech32_decoding_error,
+    bech32m_encoding_error,
+    bech32m_decoding_error,
 
     incorrect_signature,
 
@@ -24,7 +24,7 @@ typedef enum {
     malformed_contact_block,
     malformed_serialized_data,
 
-    key_exchange_error,
+    key_agreement_error,
     shared_secret_generation_error,
 
     serialization_error,

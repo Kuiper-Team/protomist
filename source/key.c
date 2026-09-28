@@ -16,7 +16,7 @@ result mist_key_signing_generate(
 }
 
 result mist_key_agreement_generate(
-    mist_key_agreement* output
+    mist_key_key_agreement* output
 ) {
     crypto_box_keypair(output->public_key, output->secret_key);
 
@@ -47,14 +47,13 @@ result mist_key_signing_sign(
     const unsigned char* input,
     const size_t input_size
 ) {
-    unsigned char signature[crypto_sign_BYTES + input_size];
     size_t signature_size = 0;
     crypto_sign(
         output,
-        (size_t*) &signature_size,
-        payload,
-        payload_size,
-        signer.secret_key,
+        (unsigned long long*) &signature_size,
+        input,
+        input_size,
+        signer.secret_key
     );
 
     return success;
@@ -77,7 +76,7 @@ result mist_key_signing_verify(
         return success;
 }
 
-result mist_key_signing_sign_xeddsa(
+result mist_key_key_agreement_sign(
     unsigned char* output,
 
     const mist_key_signing signer,
@@ -110,7 +109,7 @@ result mist_key_key_agreement_dh(
         local_secret_key,
         remote_public_key
     ) != 0)
-        return key_exchange_error;
+        return key_agreement_error;
 
     return success;
 }
@@ -137,5 +136,12 @@ result mist_key_key_encapsulation_decapsulate(
 
     mist_key_key_encapsulation key
 ) {
+    if (crypto_kem_mlkem768_dec(
+        shared_secret_output,
+        ciphertext_output,
+        key.secret_key
+    ) != 0)
+        return shared_secret_generation_error;
+
     return success;
 }
