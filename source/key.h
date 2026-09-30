@@ -57,7 +57,7 @@ result mist_key_signing_verify(
 result mist_key_key_agreement_sign(
     unsigned char* output,
 
-    const mist_key_signing signer,
+    const mist_key_key_agreement signer,
     const unsigned char* input,
     const size_t input_size
 ); //Uses XEdDSA to sign.
@@ -73,14 +73,14 @@ result mist_key_key_encapsulation_encapsulate(
     unsigned char* ciphertext_output,
     unsigned char* shared_secret_output,
 
-    mist_key_key_encapsulation key
+    const mist_key_key_encapsulation key
 );
 
 result mist_key_key_encapsulation_decapsulate(
     unsigned char* ciphertext_output,
     unsigned char* shared_secret_output,
 
-    mist_key_key_encapsulation key
+    const mist_key_key_encapsulation key
 );
 
 #endif

@@ -11,7 +11,7 @@ result mist_subkey_signing_encryption(
 
     const uint32_t identifier
 ) {
-    *output = {0};
+    *output = (mist_subkey_signing) {0};
     mist_key_signing_generate(output->key);
     output->identifier = identifier;
 
@@ -23,7 +23,7 @@ result mist_subkey_key_agreement_generate(
 
     const uint32_t identifier
 ) {
-    *output = {0};
+    *output = (mist_subkey_key_agreement) {0};
     mist_key_key_agreement_generate(output->key);
     output->identifier = identifier;
 
@@ -35,7 +35,7 @@ result mist_subkey_encryption_generate(
 
     const uint32_t identifier
 ) {
-    *output = {0};
+    *output = (mist_subkey_encryption) {0};
     mist_key_encryption_generate(output->key);
     output->identifier = identifier;
 
@@ -47,7 +47,7 @@ result mist_subkey_key_encapsulation_generate(
 
     const uint32_t identifier
 ) {
-    *output = {0};
+    *output = (mist_subkey_key_encapsulation) {0};
     mist_key_key_encapsulation_generate(output->key);
     output->identifier = identifier;
 

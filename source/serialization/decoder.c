@@ -74,13 +74,11 @@ static result decode_using_oer(
     return success;
 }
 
-result MIST_DESERIALIZE_CONTACT(
-    char** MIST_LABEL_output,
-    char** MIST_MEMO_output,
-    struct recipient_prekey_bundle* MIST_PREKEY_BUNDLE_output,
+result mist_serialization_contact_deserialize(
+    mist_contact* output,
 
-    const unsigned char* MIST_ENCODED,
-    const size_t MIST_ENCODED_size
+    const unsigned char* input,
+    const size_t input_size
 ) {
     Contact_t* contact = {0};
 
@@ -88,8 +86,8 @@ result MIST_DESERIALIZE_CONTACT(
         0,
         &asn_OER_Contact,
         (void**) &contact,
-        MIST_ENCODED,
-        MIST_ENCODED_size
+        input,
+        input_size
     );
     if (decoding_result.code != RC_OK) {
         ASN_STRUCT_FREE(&asn_OER_Contact, contact);
@@ -98,39 +96,44 @@ result MIST_DESERIALIZE_CONTACT(
     }
 
     unsigned char *ik_pk, *spk_pk, *pqspk_pk, *spk_signature, *pqspk_signature;
-    char *spk_identifier, *pqspk_identifier;
+    uint32_t spk_identifier, pqspk_identifier;
 
     size_t ik_pk_size, spk_pk_size, pqspk_pk_size, spk_identifier_size, pqspk_identifier_size, spk_signature_size, pqspk_signature_size;
 
-    Recipient_Prekey_Bundle_t prekey_bundle = contact->prekey_bundle;
+    Recipient_Prekey_Bundle_t asn_prekey_bundle = contact->prekey_bundle;
 
-    from_OCTET_STRING(&ik_pk, &ik_pk_size, prekey_bundle.identity_pk);
-    from_OCTET_STRING(&spk_pk, &spk_pk_size, prekey_bundle.spk);
-    from_OCTET_STRING(&pqspk_pk, &pqspk_pk_size, prekey_bundle.pqspk);
-    from_UTF8String(&spk_identifier, &spk_identifier_size, prekey_bundle.spk_identifier);
-    from_UTF8String(&pqspk_identifier, &pqspk_identifier_size, prekey_bundle.pqspk_identifier);
-    from_OCTET_STRING(&spk_signature, &spk_signature_size, prekey_bundle.spk_signature);
-    from_OCTET_STRING(&pqspk_signature, &pqspk_signature_size, prekey_bundle.pqspk_signature);
+    from_OCTET_STRING(&ik_pk, &ik_pk_size, asn_prekey_bundle.identity_pk);
+    from_OCTET_STRING(&spk_pk, &spk_pk_size, asn_prekey_bundle.spk);
+    from_OCTET_STRING(&pqspk_pk, &pqspk_pk_size, asn_prekey_bundle.pqspk);
+    from_UTF8String(&spk_identifier, &spk_identifier_size, asn_prekey_bundle.spk_identifier); //Replace (uint32_t)
+    from_UTF8String(&pqspk_identifier, &pqspk_identifier_size, asn_prekey_bundle.pqspk_identifier); //Replace (uint32_t)
+    from_OCTET_STRING(&spk_signature, &spk_signature_size, asn_prekey_bundle.spk_signature);
+    from_OCTET_STRING(&pqspk_signature, &pqspk_signature_size, asn_prekey_bundle.pqspk_signature);
 
     if (
         ik_pk_size != MIST_ED25519_PK_SIZE ||
         spk_pk_size != MIST_X25519_PK_SIZE ||
         pqspk_pk_size != MIST_MLKEM768_PK_SIZE ||
         spk_signature_size != MIST_XEDDSA_SIGNATURE_SIZE ||
-        pqspk_signature_ssize != MIST_XEDDSA_SIGNATURE_SIZE
+        pqspk_signature_size != MIST_XEDDSA_SIGNATURE_SIZE
     )
         return malformed_serialized_data;
 
-    from_UTF8String(MIST_LABEL_output, NULL, contact->label);
-    from_UTF8String(MIST_MEMO_output, NULL, contact->memo);
+    output = (mist_contact) {0};
 
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_IK_PK, ik_pk, ik_pk_size);
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_PK, spk_pk, spk_pk_size);
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_PK, pqspk_pk, pqspk_pk_size);
-    MIST_PREKEY_BUNDLE_output->MIST_SPK_IDENTIFIER = spk_identifier;
-    MIST_PREKEY_BUNDLE_output->MIST_PQSPK_IDENTIFIER = pqspk_identifier;
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_SPK_SIGNATURE, spk_signature, spk_signature_size);
-    memcpy(MIST_PREKEY_BUNDLE_output->MIST_PQSPK_SIGNATURE, pqspk_signature, pqspk_signature_size);
+    from_UTF8String(output->label, NULL, contact->label);
+    from_UTF8String(output->label, NULL, contact->memo);
+
+    memcpy(output->prekey_bundle->identity.public_key, ik_pk, ik_pk_size);
+    memcpy(output->prekey_bundle->spk.key->public_key, spk_pk, spk_pk_size);
+    memcpy(output->prekey_bundle->pqspk.key->public_key, pqspk_pk, pqspk_pk_size);
+    output->prekey_bundle->spk.identifier = spk_identifier;
+    output->prekey_bundle->pqspk.identifier = pqspk_identifier;
+    memcpy(output->prekey_bundle->spk_signature, spk_signature, spk_signature_size);
+    memcpy(output->prekey_bundle->pqspk_signature, pqspk_signature, pqspk_signature_size);
+
+    free(contact->label);
+    free(contact->memo);
 
     free(ik_pk);
     free(spk_pk);

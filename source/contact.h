@@ -4,9 +4,9 @@
 #include "pqxdh.h"
 
 struct mist_contact {
-    unsigned char* label,
-    unsigned char* memo,
-    struct recipient_prekey_bundle prekey_bundle,
+    char* label,
+    char* memo,
+    mist_pqxdh_recipient_prekey_bundle prekey_bundle,
 }
 
 #endif

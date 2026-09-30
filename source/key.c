@@ -79,7 +79,7 @@ result mist_key_signing_verify(
 result mist_key_key_agreement_sign(
     unsigned char* output,
 
-    const mist_key_signing signer,
+    const mist_key_key_agreement signer,
     const unsigned char* input,
     const size_t input_size
 ) {

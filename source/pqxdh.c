@@ -29,9 +29,9 @@ result mist_pqxdh_recipient_prekeys_spk_rotate(
     mist_subkey_key_agreement_generate(&recipient_prekeys->spk, identifier);
     mist_key_key_agreement_sign(
         recipient_prekeys->spk_signature,
-        recipient_prekeys->identity.key,
-        recipient_prekeys->spk.public_key,
-        sizeof(recipient_prekeys->spk.public_key)
+        recipient_prekeys->identity,
+        recipient_prekeys->spk.key->public_key,
+        sizeof(recipient_prekeys->spk.key->public_key)
     );
 
     return success;
@@ -44,10 +44,10 @@ result mist_pqxdh_recipient_prekeys_pqspk_rotate(
 ) {
     mist_subkey_key_encapsulation_generate(&recipient_prekeys->pqspk, identifier);
     mist_key_key_agreement_sign(
-        initiator_prekeys->spk_signature,
-        initiator_prekeys->identity.key,
-        initiator_prekeys->spk.public_key,
-        sizeof(initiator_prekeys->spk.public_key),
+        recipient_prekeys->spk_signature,
+        recipient_prekeys->identity,
+        recipient_prekeys->spk.key->public_key,
+        sizeof(recipient_prekeys->spk.key->public_key)
     );
 
     return success;
@@ -116,7 +116,7 @@ result mist_pqxdh_shared_key( //To-do: Seperate initiator and recipient SK deriv
     if (mist_key_key_encapsulation_encapsulate(
         ciphertext,
         shared_secret,
-        recipient_prekeys.pqspk.key
+        *recipient_prekeys.pqspk.key
     ) != 0)
         return shared_secret_generation_error;
 
@@ -127,7 +127,7 @@ result mist_pqxdh_shared_key( //To-do: Seperate initiator and recipient SK deriv
     result dh_result = mist_key_key_agreement_dh(
         dh1,
         initiator_prekeys.identity.secret_key,
-        recipient_prekeys.spk.key
+        recipient_prekeys.spk.key->public_key
     );
     if (dh_result != success)
         return dh_result;
