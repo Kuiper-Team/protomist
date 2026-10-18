@@ -1,10 +1,10 @@
 ASN_MODULE_SRCS=	\
-	Contact.c	\
-	Recipient-Prekey-Bundle.c
+	Recipient-Prekey-Bundle.c	\
+	Contact.c
 
 ASN_MODULE_HDRS=	\
-	Contact.h	\
-	Recipient-Prekey-Bundle.h
+	Recipient-Prekey-Bundle.h	\
+	Contact.h
 
 ASN_MODULE_HDRS+=OPEN_TYPE.h
 ASN_MODULE_SRCS+=OPEN_TYPE.c
@@ -75,7 +75,7 @@ ASN_MODULE_SRCS+=NativeInteger_oer.c
 ASN_MODULE_SRCS+=constr_CHOICE_oer.c
 ASN_MODULE_SRCS+=constr_SEQUENCE_oer.c
 
-ASN_MODULE_CFLAGS=
+ASN_MODULE_CFLAGS=-DASN_DISABLE_PER_SUPPORT 
 
 lib_LTLIBRARIES+=libasncodec.la
 libasncodec_la_SOURCES=$(ASN_MODULE_SRCS) $(ASN_MODULE_HDRS)

@@ -3,10 +3,10 @@
 
 #include "pqxdh.h"
 
-struct mist_contact {
-    char* label,
-    char* memo,
-    mist_pqxdh_recipient_prekey_bundle prekey_bundle,
-}
+typedef struct {
+    char* label;
+    char* memo;
+    mist_pqxdh_recipient_prekeys prekey_bundle;
+} mist_contact;
 
 #endif

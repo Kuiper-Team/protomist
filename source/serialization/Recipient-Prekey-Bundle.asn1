@@ -5,9 +5,8 @@ Recipient-Prekey-Bundle-Module DEFINITIONS ::= BEGIN
         spk OCTET STRING,
         pqspk OCTET STRING,
 
-
-        spk-identifier UTF8String,
-        pqspk-identifier UTF8String,
+        spk-identifier OCTET STRING,
+        pqspk-identifier OCTET STRING,
 
         spk-signature OCTET STRING,
         pqspk-signature OCTET STRING
